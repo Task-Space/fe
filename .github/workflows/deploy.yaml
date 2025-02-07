@@ -1,0 +1,26 @@
+name: Deploy Image
+
+on:
+  push:
+    branches:
+      - "main"
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository}}
+
+jobs:
+  docker-compose:
+    runs-on: self-hosted
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Docker stop old container
+        run: docker container stop whatsup-fe || true
+
+      - name: Docker Compose Up
+        run: docker run -d --name whatsup-fe -p 3334:80 --rm --pull always ${{ env.REGISTRY }}/quyenpqwork/whatsup-fe:latest
