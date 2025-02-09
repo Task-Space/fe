@@ -25,7 +25,7 @@ const TextFieldControl = <T extends FieldValues>({
       {...register(name)}
       error={!!error}
       {...rest}
-      // helperText={error?.message}
+      helperText={error?.message}
       color={error ? "error" : color || "primary"}
     />
   );
