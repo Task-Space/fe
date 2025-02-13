@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Homepage, Login, Register } from "../pages";
+import { Homepage, Login, ProjectOverview, Register } from "../pages";
 
 const AppRouter = () => {
   return (
@@ -7,6 +7,7 @@ const AppRouter = () => {
       <Route path="/" element={<Homepage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/project-overview" element={<ProjectOverview />} />
     </Routes>
   );
 };
