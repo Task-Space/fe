@@ -29,7 +29,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   justifyContent: "space-between",
   alignSelf: "center",
   minWidth: "70%",
-  height: "80%",
+  height: "95%",
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   boxShadow:
@@ -117,19 +117,21 @@ const SignInCard = () => {
         </Grid>
         <Grid container gap={2} justifyContent={"space-between"}>
           <Grid>
-            <Typography
-              component="h2"
-              variant="h5"
-              fontFamily={"Space Grotesk"}
-              color="#24445B"
-              fontWeight={"bold"}
-              sx={{
-                width: "100%",
-                fontSize: "clamp(1.5rem, 10vw, 1.75rem)"
-              }}
-            >
-              Home
-            </Typography>
+            <Link href="/">
+              <Typography
+                component="h2"
+                variant="h5"
+                fontFamily={"Space Grotesk"}
+                color="#24445B"
+                fontWeight={"bold"}
+                sx={{
+                  width: "100%",
+                  fontSize: "clamp(1.5rem, 10vw, 1.75rem)"
+                }}
+              >
+                Home
+              </Typography>
+            </Link>
           </Grid>
           <Grid>
             <Typography
@@ -154,7 +156,7 @@ const SignInCard = () => {
           height: "auto",
           marginTop: "1rem"
         }}
-        src="/public/logo.svg"
+        src="logo.svg"
       />
       <Box
         component="form"
