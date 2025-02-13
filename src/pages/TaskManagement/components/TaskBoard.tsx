@@ -148,83 +148,26 @@ const TaskBoard = () => {
         }}
       >
         <DroppableField
-          // title="To Do"
-          // size={{ lg: 4 }}
+          title="To Do"
+          size={{ lg: 4 }}
           key={TASK_STATUS.TODO.toString()}
           id={TASK_STATUS.TODO.toString()}
           items={items.todo}
         />
         <DroppableField
-          // title="To Do"
-          // size={{ lg: 4 }}
+          title="Doing"
+          size={{ lg: 4 }}
           key={TASK_STATUS.IN_PROGRESS.toString()}
           id={TASK_STATUS.IN_PROGRESS.toString()}
           items={items.doing}
         />
         <DroppableField
-          // title="To Do"
-          // size={{ lg: 4 }}
+          title="Done"
+          size={{ lg: 4 }}
           key={TASK_STATUS.COMPLETED.toString()}
           id={TASK_STATUS.COMPLETED.toString()}
           items={items.completed}
         />
-        {/* <DroppableField
-          title="To Do"
-          size={{ lg: 4 }}
-          key={TASK_STATUS.TODO.toString()}
-          id={TASK_STATUS.TODO.toString()}
-        >
-          {tasks
-            .filter((task) => task.status === TASK_STATUS.TODO)
-            .map(({ id, progress, status, tag, title }) => (
-              <TaskItem
-                key={id}
-                id={id}
-                progress={progress}
-                status={status}
-                tag={tag}
-                title={title}
-              />
-            ))}
-        </DroppableField>
-        <DroppableField
-          title="To Do"
-          size={{ lg: 4 }}
-          key={TASK_STATUS.IN_PROGRESS.toString()}
-          id={TASK_STATUS.IN_PROGRESS.toString()}
-        >
-          {tasks
-            .filter((task) => task.status === TASK_STATUS.IN_PROGRESS)
-            .map(({ id, progress, status, tag, title }) => (
-              <TaskItem
-                key={id}
-                id={id}
-                progress={progress}
-                status={status}
-                tag={tag}
-                title={title}
-              />
-            ))}
-        </DroppableField>
-        <DroppableField
-          title="To Do"
-          size={{ lg: 4 }}
-          key={TASK_STATUS.COMPLETED.toString()}
-          id={TASK_STATUS.COMPLETED.toString()}
-        >
-          {tasks
-            .filter((task) => task.status === TASK_STATUS.COMPLETED)
-            .map(({ id, progress, status, tag, title }) => (
-              <TaskItem
-                key={id}
-                id={id}
-                progress={progress}
-                status={status}
-                tag={tag}
-                title={title}
-              />
-            ))}
-        </DroppableField> */}
         <DragOverlay>
           {activeId ? <TaskItem id={activeId} /> : null}
         </DragOverlay>
