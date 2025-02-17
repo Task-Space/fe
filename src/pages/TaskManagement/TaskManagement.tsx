@@ -23,63 +23,65 @@ const TaskManagement = () => {
   };
 
   return (
-    <Box>
-      <Grid
-        padding={"1.5rem 3rem"}
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Typography variant="h4" fontWeight={"bold"}>
-          Project PlanetX
-        </Typography>
-        <TextField
-          id="input-with-icon-textfield"
-          variant="outlined"
-          placeholder="Search ..."
-          size="small"
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <SearchIcon />
-                </InputAdornment>
-              )
-            }
-          }}
-        />
-      </Grid>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
+    <>
+      <Box>
+        <Grid
+          padding={"1.5rem 3rem"}
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
         >
-          <Tab
-            label={
-              <Grid container spacing={1}>
-                <DensityMediumIcon />
-                <Typography fontWeight={"bold"}>Board</Typography>
-              </Grid>
-            }
+          <Typography variant="h4" fontWeight={"bold"}>
+            Project PlanetX
+          </Typography>
+          <TextField
+            id="input-with-icon-textfield"
+            variant="outlined"
+            placeholder="Search ..."
+            size="small"
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                )
+              }
+            }}
           />
-          <Tab
-            label={
-              <Grid container spacing={1}>
-                <CalendarMonthIcon />
-                <Typography fontWeight={"bold"}>Calendar</Typography>
-              </Grid>
-            }
-          />
-        </Tabs>
+        </Grid>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <Tab
+              label={
+                <Grid container spacing={1}>
+                  <DensityMediumIcon />
+                  <Typography fontWeight={"bold"}>Board</Typography>
+                </Grid>
+              }
+            />
+            <Tab
+              label={
+                <Grid container spacing={1}>
+                  <CalendarMonthIcon />
+                  <Typography fontWeight={"bold"}>Calendar</Typography>
+                </Grid>
+              }
+            />
+          </Tabs>
+        </Box>
+        <CustomTabPanel padding={3} value={value} index={0}>
+          <TaskBoard />
+        </CustomTabPanel>
+        <CustomTabPanel padding={0} value={value} index={1}>
+          <Calendar />
+        </CustomTabPanel>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        <TaskBoard />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <Calendar />
-      </CustomTabPanel>
-    </Box>
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import http from "../../utils/http";
 import { LoginRequestType, RegisterRequestType } from "./auth-req.type";
 import { LoginResponseType } from "./auth-res.type";
 
-const URL = "auth";
+const URL = "Identity";
 
 const authApi = {
   login(data: LoginRequestType) {

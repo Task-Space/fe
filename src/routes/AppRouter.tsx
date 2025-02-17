@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Homepage, Login, ProjectOverview, Register } from "../pages";
+import { Homepage, Login, Profile, ProjectOverview, Register } from "../pages";
 import TaskManagement from "../pages/TaskManagement/TaskManagement";
 import ProjectIndex from "../pages/ProjectIndex/ProjectIndex";
 
@@ -16,6 +16,14 @@ const AppRouter = () => {
           <Route index={true} element={<ProjectOverview />} />,
           <Route path="task-management" element={<TaskManagement />} />
         ]}
+      />
+      <Route
+        path="/profile"
+        element={<Profile />}
+        // children={[
+        //   <Route index={true} element={<ProjectOverview />} />,
+        //   <Route path="task-management" element={<TaskManagement />} />
+        // ]}
       />
     </Routes>
   );

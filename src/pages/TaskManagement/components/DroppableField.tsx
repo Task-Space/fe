@@ -7,6 +7,7 @@ import {
 import TaskItem from "./TaskItem";
 import { Typography } from "@mui/material";
 import Grid, { Grid2Props } from "@mui/material/Grid2";
+import CreateTask from "./CreateTask";
 
 interface DroppableFieldProps extends Grid2Props {
   id: string;
@@ -51,7 +52,7 @@ const DroppableField = ({
             ({items.length})
           </Typography> */}
         </Grid>
-        <AddCircleOutlineIcon />
+        <CreateTask />
       </Grid>
       <SortableContext
         id={id}

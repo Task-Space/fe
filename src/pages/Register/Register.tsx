@@ -12,15 +12,10 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/material/styles";
-import {
-  GoogleIcon,
-  FacebookIcon,
-  TextFieldControl,
-  Card
-} from "../../components";
+import { GoogleIcon, TextFieldControl, Card } from "../../components";
 import { authApi, RegisterRequestType } from "../../apis";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import {
@@ -28,6 +23,9 @@ import {
   isAxiosUnprocessableEntityError
 } from "../../utils/error";
 import ERROR_CONSTANTS from "../../constants/error";
+import { MenuItem, Select } from "@mui/material";
+import domainApi from "../../apis/domain/domain.api";
+import universityApi from "../../apis/university/university.api";
 
 const RegisterContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
@@ -42,7 +40,7 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
     zIndex: -1,
     inset: 0,
     backgroundImage:
-      "radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))",
+      "linear-gradient(135deg, rgba(67,223,77,1) 0%, rgba(99,129,250,1) 100%)",
     backgroundRepeat: "no-repeat",
     ...theme.applyStyles("dark", {
       backgroundImage:
@@ -53,10 +51,24 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
 
 const Register = () => {
   const nav = useNavigate();
+  const [role, setRole] = React.useState<number>(0);
   const { register, formState, getValues, clearErrors, setError } =
     useForm<RegisterRequestType>({
       criteriaMode: "all"
     });
+
+  const [domains, universities] = useQueries({
+    queries: [
+      {
+        queryKey: ["domains"],
+        queryFn: () => domainApi.getAllDomains()
+      },
+      {
+        queryKey: ["universities"],
+        queryFn: () => universityApi.getAllUniversities()
+      }
+    ]
+  });
 
   const handleRegister = useMutation({
     mutationFn: (data: RegisterRequestType) => authApi.register(data)
@@ -157,37 +169,85 @@ const Register = () => {
                 </FormControl>
               </Grid>
             </Grid>
+            <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <FormControl>
+                  <FormLabel htmlFor="email">Email</FormLabel>
+                  <TextFieldControl<RegisterRequestType>
+                    register={register}
+                    required
+                    fullWidth
+                    id="email"
+                    size={"small"}
+                    placeholder="your@email.com"
+                    name="email"
+                    autoComplete="email"
+                    variant="outlined"
+                    error={formState.errors.email}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <FormControl>
+                  <FormLabel htmlFor="email">Phone Number</FormLabel>
+                  <TextFieldControl<RegisterRequestType>
+                    register={register}
+                    required
+                    fullWidth
+                    id="email"
+                    size={"small"}
+                    placeholder="your@email.com"
+                    name="email"
+                    autoComplete="email"
+                    variant="outlined"
+                    error={formState.errors.email}
+                  />
+                </FormControl>
+              </Grid>
+            </Grid>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextFieldControl<RegisterRequestType>
-                register={register}
-                required
-                fullWidth
-                id="email"
-                size={"small"}
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                error={formState.errors.email}
-              />
+              <FormLabel htmlFor="youare">You are</FormLabel>
+              <Select
+                value={role}
+                onChange={(e) => setRole(e.target.value as number)}
+              >
+                <MenuItem value={0}>Student</MenuItem>
+                <MenuItem value={1}>Mentor</MenuItem>
+              </Select>
             </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextFieldControl<RegisterRequestType>
-                register={register}
-                required
-                fullWidth
-                name="password"
-                size={"small"}
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={formState.errors.password}
-              />
-            </FormControl>
+            {role === 0 ? (
+              <>
+                <FormControl>
+                  <FormLabel htmlFor="youare">Your university</FormLabel>
+                  <Select>
+                    {universities.data?.data.data.map((uni) => (
+                      <MenuItem key={uni.id} value={uni.id}>
+                        {uni.universityName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel htmlFor="password">Password</FormLabel>
+                  <TextFieldControl<RegisterRequestType>
+                    register={register}
+                    required
+                    fullWidth
+                    name="password"
+                    size={"small"}
+                    placeholder="••••••"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
+                    variant="outlined"
+                    error={formState.errors.password}
+                  />
+                </FormControl>
+              </>
+            ) : (
+              <></>
+            )}
+
             <FormControlLabel
               control={<Checkbox value="allowExtraEmails" color="primary" />}
               label="I want to receive updates via email."
@@ -208,14 +268,7 @@ const Register = () => {
             >
               Sign up with Google
             </Button>
-            <Button
-              fullWidth
-              variant="outlined"
-              onClick={() => alert("Sign up with Facebook")}
-              startIcon={<FacebookIcon />}
-            >
-              Sign up with Facebook
-            </Button>
+
             <Typography sx={{ textAlign: "center" }}>
               Already have an account?{" "}
               <Link href="/login" variant="body2" sx={{ alignSelf: "center" }}>

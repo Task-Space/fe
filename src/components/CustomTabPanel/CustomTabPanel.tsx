@@ -4,12 +4,14 @@ interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+  padding: number;
 }
 
 const CustomTabPanel = ({
   children,
   value,
   index,
+  padding,
   ...props
 }: TabPanelProps) => {
   return (
@@ -20,7 +22,7 @@ const CustomTabPanel = ({
       aria-labelledby={`simple-tab-${index}`}
       {...props}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box padding={padding}>{children}</Box>}
     </div>
   );
 };
