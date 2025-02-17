@@ -1,3 +1,3 @@
-export { default as authApi } from "./auth/auth.api";
-export * from "./auth/auth-req.type";
-export * from "./auth/auth-res.type";
+export { default as identityApi } from "./identity/identity.api";
+export * from "./identity/identity-req.type";
+export * from "./identity/identity-res.type";

@@ -1,10 +1,11 @@
-import http from "../../utils/http";
+import { IDomain } from "../../types/domain";
+import http, { SuccessResponse } from "../../utils/http";
 
 const URL = "Domain";
 
 const domainApi = {
   getAllDomains() {
-    return http.get<any>(`${URL}`);
+    return http.get<SuccessResponse<IDomain[]>>(`${URL}`);
   }
 };
 

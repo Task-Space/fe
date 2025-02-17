@@ -1,10 +1,11 @@
-import http from "../../utils/http";
+import { IUniversity } from "../../types/university";
+import http, { SuccessResponse } from "../../utils/http";
 
 const URL = "University";
 
 const universityApi = {
   getAllUniversities() {
-    return http.get<any>(`${URL}`);
+    return http.get<SuccessResponse<IUniversity[]>>(`${URL}`);
   }
 };
 

@@ -1,4 +1,4 @@
-interface Task {
+interface ITask {
   id: string;
   title: string;
   progress: number;
@@ -20,5 +20,5 @@ enum TASK_TAG {
   HIGH_PRIORITY = "High Priority"
 }
 
-export type { Task };
+export type { ITask };
 export { TASK_STATUS, TASK_TAG };

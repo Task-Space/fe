@@ -1,10 +1,8 @@
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
 import Link from "@mui/material/Link";
@@ -13,19 +11,23 @@ import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid2";
 import { styled } from "@mui/material/styles";
 import { GoogleIcon, TextFieldControl, Card } from "../../components";
-import { authApi, RegisterRequestType } from "../../apis";
+import { ApplyRequestType, identityApi, RegisterRequestType } from "../../apis";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueries } from "@tanstack/react-query";
+import { MenuItem, Select } from "@mui/material";
+import domainApi from "../../apis/domain/domain.api";
+import universityApi from "../../apis/university/university.api";
+import { DateField, DesktopDatePicker } from "@mui/x-date-pickers";
+import MultipleSelect from "../../components/MultipleSelect/MultipleSelect";
+import { IDomain } from "../../types/domain";
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import dayjs, { Dayjs } from "dayjs";
 import {
   isAxiosBadRequestError,
   isAxiosUnprocessableEntityError
 } from "../../utils/error";
-import ERROR_CONSTANTS from "../../constants/error";
-import { MenuItem, Select } from "@mui/material";
-import domainApi from "../../apis/domain/domain.api";
-import universityApi from "../../apis/university/university.api";
 
 const RegisterContainer = styled(Stack)(({ theme }) => ({
   minHeight: "100%",
@@ -49,15 +51,31 @@ const RegisterContainer = styled(Stack)(({ theme }) => ({
   }
 }));
 
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1
+});
+
 const Register = () => {
   const nav = useNavigate();
-  const [role, setRole] = React.useState<number>(0);
+  const [domains, setDomains] = useState<string[]>([]);
+  const [cv, setCv] = useState<File | null>(null);
+  const [role, setRole] = useState<number>(0);
+  const [selectedUniversity, setSelectedUniversity] = useState<string>("");
+  const [joinDateUni, setJoinDateUni] = useState<Dayjs | null>(dayjs);
   const { register, formState, getValues, clearErrors, setError } =
     useForm<RegisterRequestType>({
       criteriaMode: "all"
     });
 
-  const [domains, universities] = useQueries({
+  const [{ data: domainData }, { data: universityData }] = useQueries({
     queries: [
       {
         queryKey: ["domains"],
@@ -71,106 +89,171 @@ const Register = () => {
   });
 
   const handleRegister = useMutation({
-    mutationFn: (data: RegisterRequestType) => authApi.register(data)
+    mutationFn: (data: RegisterRequestType) => identityApi.register(data)
+  });
+
+  const handleApply = useMutation({
+    mutationFn: (data: ApplyRequestType) => identityApi.apply(data)
   });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     clearErrors();
-    handleRegister.mutate(
-      { ...getValues() },
-      {
-        onSuccess: () => {
-          toast.success("Register successfully, please login");
-          nav("/login");
+    if (role === 0) {
+      if (!joinDateUni) {
+        toast.error("Please select joined date");
+        return;
+      }
+      handleRegister.mutate(
+        {
+          ...getValues(),
+          universityId: selectedUniversity,
+          joinDateUni: joinDateUni?.toISOString()
         },
-        onError: (error) => {
-          if (isAxiosUnprocessableEntityError<RegisterRequestType>(error)) {
-            const formError = error.response?.data.details;
-            formError?.forEach((err) => {
-              setError(err.property, { message: err.message });
-            });
-          } else if (isAxiosBadRequestError(error)) {
-            const errorCode = error.response?.data.errorCode;
-            if (errorCode && ERROR_CONSTANTS[errorCode]) {
-              toast.error(ERROR_CONSTANTS[errorCode]["en"]);
+        {
+          onSuccess: () => {
+            toast.success("Register successfully, please login");
+            nav("/login");
+          },
+          onError: (error) => {
+            if (isAxiosUnprocessableEntityError<RegisterRequestType>(error)) {
+              const formError = error.response?.data.details;
+              formError?.forEach((err) => {
+                setError(err.property, { message: err.message });
+              });
+            } else if (isAxiosBadRequestError(error)) {
+              // const errorCode = error.response?.data.errorCode;
+              // if (errorCode && ERROR_CONSTANTS[errorCode]) {
+              //   toast.error(ERROR_CONSTANTS[errorCode]["en"]);
+              // } else {
+              //   toast.error("Unknown error code");
+              // }
+              toast.error("Something went wrong, please try again later");
             } else {
-              toast.error("Unknown error code");
+              toast.error("Something went wrong, please try again later");
             }
-          } else {
-            toast.error("Something went wrong, please try again later");
           }
         }
+      );
+    } else {
+      if (domains.length === 0) {
+        toast.error("Please select at least one domain");
+        return;
       }
-    );
+
+      if (!cv) {
+        toast.error("Please upload your CV");
+        return;
+      }
+
+      const DomainIds = domainData?.data.data.reduce(
+        (acc: string[], cur: IDomain) => {
+          if (domains.includes(cur.name)) {
+            acc.push(cur.id);
+          }
+          return acc;
+        },
+        []
+      );
+
+      handleApply.mutate(
+        {
+          FirstName: getValues().firstName,
+          LastName: getValues().lastName,
+          Email: getValues().email,
+          PhoneNumber: getValues().phoneNumber,
+          DomainIds: DomainIds as string[],
+          MentorCv: cv
+        },
+        {
+          onSuccess: () => {
+            toast.success(
+              "Apply successfully, please wait for approval on your email"
+            );
+            nav("/login");
+          }
+          // onError: (error) => {
+          //   if (isAxiosUnprocessableEntityError<ApplyRequestType>(error)) {
+          //     const formError = error.response?.data.details;
+          //     formError?.forEach((err) => {
+          //       setError(err.property, { message: err.message });
+          //     });
+          //   } else if (isAxiosBadRequestError(error)) {
+          //     // const errorCode = error.response?.data.errorCode;
+          //     // if (errorCode && ERROR_CONSTANTS[errorCode]) {
+          //     //   toast.error(ERROR_CONSTANTS[errorCode]["en"]);
+          //     // } else {
+          //     //   toast.error("Unknown error code");
+          //     // }
+          //     toast.error("Something went wrong, please try again later");
+          //   } else {
+          //     toast.error("Something went wrong, please try again later");
+          //   }
+          // }
+        }
+      );
+    }
   };
 
   return (
     <>
       <CssBaseline enableColorScheme />
-      <RegisterContainer
-        direction="column"
-        height={{
-          xs: "100vh",
-          sm: "calc((1 - var(--template-frame-height, 0)) * 100dvh)"
-        }}
-        justifyContent="space-between"
-      >
+      <RegisterContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: "100%", fontSize: "clamp(2rem, 10vw, 2.15rem)" }}
-          >
-            Sign up
-          </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: { xs: 1, sm: 2 }
+          <img
+            style={{
+              width: "25%",
+              height: "auto",
+              marginTop: "1rem"
             }}
-          >
-            <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth>
-                  <FormLabel htmlFor="first_name">First Name</FormLabel>
-                  <TextFieldControl<RegisterRequestType>
-                    register={register}
-                    size={"small"}
-                    id="first_name"
-                    name="first_name"
-                    placeholder="Joe"
-                    autoComplete="firt_name"
-                    required
-                    fullWidth
-                    variant="outlined"
-                    error={formState.errors.first_name}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth>
-                  <FormLabel htmlFor="last_name">Last Name</FormLabel>
-                  <TextFieldControl<RegisterRequestType>
-                    register={register}
-                    required
-                    size={"small"}
-                    fullWidth
-                    id="last_name"
-                    placeholder="Biden"
-                    name="last_name"
-                    autoComplete="last_name"
-                    variant="outlined"
-                    error={formState.errors.last_name}
-                  />
-                </FormControl>
-              </Grid>
-            </Grid>
-            <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
-              <Grid size={{ xs: 12, sm: 6 }}>
+            src="logo.svg"
+          />
+          <Box component="form" onSubmit={handleSubmit}>
+            <Grid container display={"flex"} justifyContent={"space-between"}>
+              <Grid
+                display={"flex"}
+                size={5.5}
+                spacing={2}
+                container
+                flexDirection={"column"}
+              >
+                <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <FormLabel htmlFor="firstName">First Name</FormLabel>
+                      <TextFieldControl<RegisterRequestType>
+                        register={register}
+                        size={"small"}
+                        id="firstName"
+                        name="firstName"
+                        placeholder="Joe"
+                        autoComplete="firstName"
+                        required
+                        fullWidth
+                        variant="outlined"
+                        error={formState.errors.firstName}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <FormControl fullWidth>
+                      <FormLabel htmlFor="lastName">Last Name</FormLabel>
+                      <TextFieldControl<RegisterRequestType>
+                        register={register}
+                        required
+                        size={"small"}
+                        fullWidth
+                        id="lastName"
+                        placeholder="Biden"
+                        name="lastName"
+                        autoComplete="lastName"
+                        variant="outlined"
+                        error={formState.errors.lastName}
+                      />
+                    </FormControl>
+                  </Grid>
+                </Grid>
+
                 <FormControl>
                   <FormLabel htmlFor="email">Email</FormLabel>
                   <TextFieldControl<RegisterRequestType>
@@ -186,74 +269,204 @@ const Register = () => {
                     error={formState.errors.email}
                   />
                 </FormControl>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+
                 <FormControl>
-                  <FormLabel htmlFor="email">Phone Number</FormLabel>
+                  <FormLabel htmlFor="phoneNumber">Phone Number</FormLabel>
                   <TextFieldControl<RegisterRequestType>
                     register={register}
                     required
                     fullWidth
-                    id="email"
+                    id="phoneNumber"
                     size={"small"}
-                    placeholder="your@email.com"
-                    name="email"
-                    autoComplete="email"
+                    placeholder="0123456789"
+                    name="phoneNumber"
+                    autoComplete="phoneNumber"
                     variant="outlined"
-                    error={formState.errors.email}
+                    error={formState.errors.phoneNumber}
                   />
                 </FormControl>
+
+                {role === 0 && (
+                  <FormControl>
+                    <FormLabel htmlFor="password">Password</FormLabel>
+                    <TextFieldControl<RegisterRequestType>
+                      register={register}
+                      required
+                      fullWidth
+                      name="password"
+                      size={"small"}
+                      placeholder="••••••"
+                      type="password"
+                      id="password"
+                      autoComplete="new-password"
+                      variant="outlined"
+                      error={formState.errors.password}
+                    />
+                  </FormControl>
+                )}
               </Grid>
-            </Grid>
-            <FormControl>
-              <FormLabel htmlFor="youare">You are</FormLabel>
-              <Select
-                value={role}
-                onChange={(e) => setRole(e.target.value as number)}
+              <Divider orientation="vertical" flexItem />
+              <Grid
+                display={"flex"}
+                size={5.5}
+                spacing={2}
+                container
+                flexDirection={"column"}
               >
-                <MenuItem value={0}>Student</MenuItem>
-                <MenuItem value={1}>Mentor</MenuItem>
-              </Select>
-            </FormControl>
-            {role === 0 ? (
-              <>
                 <FormControl>
-                  <FormLabel htmlFor="youare">Your university</FormLabel>
-                  <Select>
-                    {universities.data?.data.data.map((uni) => (
-                      <MenuItem key={uni.id} value={uni.id}>
-                        {uni.universityName}
-                      </MenuItem>
-                    ))}
+                  <FormLabel htmlFor="youare">You are</FormLabel>
+                  <Select
+                    value={role}
+                    size="small"
+                    onChange={(e) => setRole(e.target.value as number)}
+                  >
+                    <MenuItem value={0}>Student</MenuItem>
+                    <MenuItem value={1}>Mentor</MenuItem>
                   </Select>
                 </FormControl>
-                <FormControl>
-                  <FormLabel htmlFor="password">Password</FormLabel>
-                  <TextFieldControl<RegisterRequestType>
-                    register={register}
-                    required
-                    fullWidth
-                    name="password"
-                    size={"small"}
-                    placeholder="••••••"
-                    type="password"
-                    id="password"
-                    autoComplete="new-password"
-                    variant="outlined"
-                    error={formState.errors.password}
-                  />
-                </FormControl>
-              </>
-            ) : (
-              <></>
-            )}
+                {role === 0 ? (
+                  <>
+                    <FormControl fullWidth={true}>
+                      <FormLabel htmlFor="youruniversity">
+                        Your university
+                      </FormLabel>
+                      <Select
+                        size="small"
+                        value={selectedUniversity}
+                        onChange={(event) =>
+                          setSelectedUniversity(event.target.value)
+                        }
+                        fullWidth={true}
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {universityData?.data.data.map(({ id, name }) => (
+                          <MenuItem key={id} value={id}>
+                            {name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel htmlFor="password">Joined Date</FormLabel>
+                      <DesktopDatePicker
+                        showDaysOutsideCurrentMonth
+                        value={joinDateUni}
+                        onChange={(date) => setJoinDateUni(date)}
+                        slots={{
+                          field: styled(DateField)(({}) => {
+                            return {
+                              "& .MuiInputBase-root": {
+                                width: "100%",
+                                height: "2.6rem"
+                              }
+                            };
+                          })
+                        }}
+                      />
+                    </FormControl>
 
-            <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="I want to receive updates via email."
-            />
-            <Button type="submit" fullWidth variant="contained">
-              Sign up
+                    <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth={true}>
+                          <FormLabel htmlFor="studentCode">
+                            Student Code
+                          </FormLabel>
+                          <TextFieldControl<RegisterRequestType>
+                            register={register}
+                            required
+                            fullWidth
+                            name="studentCode"
+                            size={"small"}
+                            id="studentCode"
+                            autoComplete="studentCode"
+                            variant="outlined"
+                            error={formState.errors.studentCode}
+                          />
+                        </FormControl>
+                      </Grid>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth={true}>
+                          <FormLabel htmlFor="seasonCode">
+                            Season Code
+                          </FormLabel>
+                          <TextFieldControl<RegisterRequestType>
+                            register={register}
+                            required
+                            fullWidth
+                            name="seasonCode"
+                            size={"small"}
+                            id="seasonCode"
+                            autoComplete="seasonCode"
+                            variant="outlined"
+                            error={formState.errors.seasonCode}
+                          />
+                        </FormControl>
+                      </Grid>
+                    </Grid>
+                  </>
+                ) : (
+                  <>
+                    <FormControl>
+                      <FormLabel htmlFor="domains">Domains</FormLabel>
+                      <MultipleSelect<IDomain>
+                        value={domains}
+                        setValue={setDomains}
+                        data={domainData?.data.data as IDomain[]}
+                      />
+                    </FormControl>
+                    <Grid>
+                      <FormLabel htmlFor="domains">Your CV</FormLabel>
+                      <Grid
+                        container
+                        spacing={2}
+                        display={"flex"}
+                        alignItems={"center"}
+                      >
+                        <Grid size={{ lg: 5.5 }}>
+                          <Button
+                            component="label"
+                            role={undefined}
+                            variant="contained"
+                            tabIndex={-1}
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            Upload
+                            <VisuallyHiddenInput
+                              type="file"
+                              onChange={(event) =>
+                                setCv(
+                                  event.target.files
+                                    ? event.target.files[0]
+                                    : null
+                                )
+                              }
+                              // multiple
+                            />
+                          </Button>
+                        </Grid>
+                        <Grid size={{ lg: 6.5 }} display={"flex"}>
+                          <Typography noWrap={true}>
+                            {cv ? cv.name : "No file selected"}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </>
+                )}
+              </Grid>
+            </Grid>
+
+            <Button
+              sx={{
+                mt: 2
+              }}
+              type="submit"
+              fullWidth
+              variant="contained"
+            >
+              {role === 0 ? "Sign up" : "Apply"}
             </Button>
           </Box>
           <Divider>

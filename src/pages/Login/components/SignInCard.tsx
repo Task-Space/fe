@@ -12,7 +12,7 @@ import { styled } from "@mui/material/styles";
 import ForgotPassword from "./ForgotPassword";
 import { GoogleIcon, TextFieldControl } from "../../../components";
 import Grid from "@mui/material/Grid2";
-import { authApi, LoginRequestType } from "../../../apis";
+import { identityApi, LoginRequestType } from "../../../apis";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -61,7 +61,7 @@ const SignInCard = () => {
     });
 
   const handleLogin = useMutation({
-    mutationFn: (data: LoginRequestType) => authApi.login(data)
+    mutationFn: (data: LoginRequestType) => identityApi.login(data)
   });
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -120,13 +120,12 @@ const SignInCard = () => {
             <Link href="/">
               <Typography
                 component="h2"
-                variant="h5"
+                variant="h6"
                 fontFamily={"Space Grotesk"}
                 color="#24445B"
                 fontWeight={"bold"}
                 sx={{
-                  width: "100%",
-                  fontSize: "clamp(1.5rem, 10vw, 1.75rem)"
+                  width: "100%"
                 }}
               >
                 Home
@@ -136,13 +135,12 @@ const SignInCard = () => {
           <Grid>
             <Typography
               component="h2"
-              variant="h5"
+              variant="h6"
               fontFamily={"Space Grotesk"}
               color="#24445B"
               fontWeight={"bold"}
               sx={{
-                width: "100%",
-                fontSize: "clamp(1.5rem, 10vw, 1.75rem)"
+                width: "100%"
               }}
             >
               Contact
