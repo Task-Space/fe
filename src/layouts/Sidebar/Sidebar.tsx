@@ -3,7 +3,7 @@ import {
   Drawer,
   IconButton,
   List,
-  ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   styled,
@@ -40,11 +40,8 @@ const StyledDrawer = styled(Drawer)(({ theme, open }) => ({
 }));
 
 const menuItems = [
-  { text: "Home", icon: <HomeIcon /> },
-  { text: "Profile", icon: <HomeIcon /> },
-  { text: "Messages", icon: <HomeIcon /> },
-  { text: "Analytics", icon: <HomeIcon /> },
-  { text: "Settings", icon: <HomeIcon /> }
+  { text: "Overview", icon: <HomeIcon /> },
+  { text: "TaskBoard", icon: <HomeIcon /> }
 ];
 
 const Sidebar = () => {
@@ -71,8 +68,7 @@ const Sidebar = () => {
         <List>
           {menuItems.map((item, index) => (
             <>
-              <ListItem
-                button
+              <ListItemButton
                 key={index}
                 sx={{
                   minHeight: 48,
@@ -105,7 +101,7 @@ const Sidebar = () => {
                     })
                   }}
                 />
-              </ListItem>
+              </ListItemButton>
             </>
           ))}
         </List>

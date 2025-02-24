@@ -16,9 +16,12 @@ import { useState } from "react";
 import Grid from "@mui/material/Grid2";
 import SendIcon from "@mui/icons-material/Send";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { useProjectContext } from "../../../contexts/ProjectContext";
 
 const InviteMembers = () => {
   const [open, setOpen] = useState(false);
+
+  const { project } = useProjectContext();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -138,7 +141,13 @@ const InviteMembers = () => {
                       alt="Remy Sharp"
                       src="/static/images/avatar/1.jpg"
                     />
-                    <Typography>Phạm Quốc Quyền</Typography>
+                    <Typography>
+                      {
+                        project?.team.teamMembers.find(
+                          (member) => member.isMain === true
+                        )?.name
+                      }
+                    </Typography>
                   </Grid>
                   <Grid
                     size={{ lg: 2 }}
@@ -161,50 +170,54 @@ const InviteMembers = () => {
                     </div>
                   </Grid>
                 </Grid>
-                <Grid
-                  container
-                  display={"flex"}
-                  alignItems={"center"}
-                  spacing={2}
-                  justifyContent={"space-between"}
-                >
-                  <Grid
-                    size={{ lg: 10 }}
-                    container
-                    display={"flex"}
-                    alignItems={"center"}
-                    spacing={2}
-                  >
-                    <Avatar
-                      sx={{
-                        width: 35,
-                        height: 35
-                      }}
-                      alt="Remy Sharp"
-                      src="/static/images/avatar/1.jpg"
-                    />
-                    <Typography>Phạm Quốc Quyền</Typography>
-                  </Grid>
-                  <Grid
-                    size={{ lg: 2 }}
-                    container
-                    display={"flex"}
-                    justifyContent={"end"}
-                  >
-                    <Select
-                      defaultValue={0}
-                      sx={{
-                        width: "8rem",
-                        height: "3rem",
-                        backgroundColor: "#FF855F",
-                        borderRadius: "0.5rem",
-                        border: "none"
-                      }}
+                {project?.team.teamMembers
+                  .filter((member) => member.isMain === false)
+                  .map((member) => (
+                    <Grid
+                      container
+                      display={"flex"}
+                      alignItems={"center"}
+                      spacing={2}
+                      justifyContent={"space-between"}
                     >
-                      <MenuItem value={0}>Can View</MenuItem>
-                    </Select>
-                  </Grid>
-                </Grid>
+                      <Grid
+                        size={{ lg: 10 }}
+                        container
+                        display={"flex"}
+                        alignItems={"center"}
+                        spacing={2}
+                      >
+                        <Avatar
+                          sx={{
+                            width: 35,
+                            height: 35
+                          }}
+                          alt="Remy Sharp"
+                          src="/static/images/avatar/1.jpg"
+                        />
+                        <Typography>Phạm Quốc Quyền</Typography>
+                      </Grid>
+                      <Grid
+                        size={{ lg: 2 }}
+                        container
+                        display={"flex"}
+                        justifyContent={"end"}
+                      >
+                        <Select
+                          defaultValue={0}
+                          sx={{
+                            width: "8rem",
+                            height: "3rem",
+                            backgroundColor: "#FF855F",
+                            borderRadius: "0.5rem",
+                            border: "none"
+                          }}
+                        >
+                          <MenuItem value={0}>Can View</MenuItem>
+                        </Select>
+                      </Grid>
+                    </Grid>
+                  ))}
               </Grid>
             </Grid>
           </Box>

@@ -12,18 +12,31 @@ import {
   useSensors
 } from "@dnd-kit/core";
 import { useState } from "react";
-import DroppableField from "./DroppableField";
 import TaskItem from "./TaskItem";
 import Grid from "@mui/material/Grid2";
-import { TASK_STATUS } from "../../../types/task";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useQuery } from "@tanstack/react-query";
+import { useProjectContext } from "../../../contexts/ProjectContext";
+import milestoneApi from "../../../apis/milestone/milestone.api";
+import DroppableField from "./DroppableField";
+import { Typography } from "@mui/material";
+import CreateMilestone from "./CreateMilestone";
 
 const TaskBoard = () => {
+  const { project } = useProjectContext();
+
   const [items, setItems] = useState({
     todo: ["4", "5", "6"],
     doing: ["7", "8", "9"],
     completed: ["1", "2", "3"]
   });
+
+  const { data: milestoneData } = useQuery({
+    queryKey: ["milestones", project?.id],
+    queryFn: () => milestoneApi.getMilestones(project?.id as string)
+  });
+
+  console.log(milestoneData?.data.data);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -147,27 +160,17 @@ const TaskBoard = () => {
           height: "fit-content"
         }}
       >
-        <DroppableField
-          title="To Do"
-          size={{ lg: 4 }}
-          key={TASK_STATUS.TODO.toString()}
-          id={TASK_STATUS.TODO.toString()}
-          items={items.todo}
-        />
-        <DroppableField
-          title="Doing"
-          size={{ lg: 4 }}
-          key={TASK_STATUS.IN_PROGRESS.toString()}
-          id={TASK_STATUS.IN_PROGRESS.toString()}
-          items={items.doing}
-        />
-        <DroppableField
-          title="Done"
-          size={{ lg: 4 }}
-          key={TASK_STATUS.COMPLETED.toString()}
-          id={TASK_STATUS.COMPLETED.toString()}
-          items={items.completed}
-        />
+        {milestoneData?.data.data.map((milestone) => (
+          <DroppableField
+            title={milestone.milestoneName}
+            size={{ lg: 4 }}
+            key={milestone.milestoneId}
+            id={milestone.milestoneId}
+            items={milestone.milestoneTasks}
+          />
+        ))}
+
+        <CreateMilestone />
         <DragOverlay>
           {activeId ? <TaskItem id={activeId} /> : null}
         </DragOverlay>

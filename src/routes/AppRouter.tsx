@@ -1,16 +1,45 @@
-import { Route, Routes } from "react-router-dom";
-import { Homepage, Login, Profile, ProjectOverview, Register } from "../pages";
-import TaskManagement from "../pages/TaskManagement/TaskManagement";
-import ProjectIndex from "../pages/ProjectIndex/ProjectIndex";
+import { Outlet, Route, Routes } from "react-router-dom";
+import {
+  AccountsManagement,
+  AdminBase,
+  AdminDashboard,
+  Homepage,
+  Login,
+  MyProjectsPage,
+  Profile,
+  ProjectIndex,
+  ProjectOverview,
+  Register,
+  TaskManagement
+} from "../pages";
+import { baseTheme } from "../theme/ThemeVariables";
+import { ThemeProvider } from "@mui/material";
+import { Header } from "../layouts";
 
 const AppRouter = () => {
+  const theme = baseTheme;
+
   return (
     <Routes>
-      <Route path="/" element={<Homepage />} />
+      <Route
+        path="/"
+        element={
+          <>
+            <Header />
+            <div>
+              <Outlet />
+            </div>
+          </>
+        }
+        children={[
+          <Route index={true} element={<Homepage />} />,
+          <Route path="my-projects" element={<MyProjectsPage />} />
+        ]}
+      />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route
-        path="/project"
+        path="/project/:id"
         element={<ProjectIndex />}
         children={[
           <Route index={true} element={<ProjectOverview />} />,
@@ -24,6 +53,18 @@ const AppRouter = () => {
         //   <Route index={true} element={<ProjectOverview />} />,
         //   <Route path="task-management" element={<TaskManagement />} />
         // ]}
+      />
+      <Route
+        path="/admin"
+        element={
+          <ThemeProvider theme={theme}>
+            <AdminBase />
+          </ThemeProvider>
+        }
+        children={[
+          <Route index={true} element={<AdminDashboard />} />,
+          <Route path="accounts" element={<AccountsManagement />} />
+        ]}
       />
     </Routes>
   );

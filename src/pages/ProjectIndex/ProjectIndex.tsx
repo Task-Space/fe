@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
 import {
   Avatar,
@@ -10,8 +10,18 @@ import {
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import InviteMembers from "./components/InviteMembers";
 import Sidebar from "../../layouts/Sidebar/Sidebar";
+import { useQuery } from "@tanstack/react-query";
+import projectApi from "../../apis/project/project.api";
+import { ProjectContext } from "../../contexts/ProjectContext";
 
 const ProjectIndex = () => {
+  const projectId = useLocation().pathname.split("/")[2];
+
+  const { data: projectData } = useQuery({
+    queryKey: ["project", projectId],
+    queryFn: () => projectApi.getProjectById(projectId)
+  });
+
   const breadcrumbs = [
     <Link underline="hover" key="1" color="inherit" href="/" onClick={() => {}}>
       Home
@@ -40,7 +50,7 @@ const ProjectIndex = () => {
   ];
 
   return (
-    <>
+    <ProjectContext.Provider value={{ project: projectData?.data.data }}>
       <Sidebar />
       <Grid marginLeft={6}>
         <Grid
@@ -59,21 +69,22 @@ const ProjectIndex = () => {
           </Breadcrumbs>
           <Grid container spacing={3}>
             <AvatarGroup max={6}>
-              <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-              <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-              <Avatar alt="Agnes Walker" src="/static/images/avatar/4.jpg" />
-              <Avatar
-                alt="Trevor Henderson"
-                src="/static/images/avatar/5.jpg"
-              />
+              {projectData?.data.data.team.teamMembers.map((member) => (
+                <Avatar alt={member.name} />
+              ))}
             </AvatarGroup>
             <InviteMembers />
           </Grid>
         </Grid>
-        <Outlet />
+        <div
+          style={{
+            padding: "1.5rem 3rem"
+          }}
+        >
+          <Outlet />
+        </div>
       </Grid>
-    </>
+    </ProjectContext.Provider>
   );
 };
 

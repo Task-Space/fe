@@ -26,7 +26,6 @@ const TaskManagement = () => {
     <>
       <Box>
         <Grid
-          padding={"1.5rem 3rem"}
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}

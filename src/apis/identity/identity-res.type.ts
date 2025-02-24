@@ -1,11 +1,8 @@
+import { IMentor } from "../../types/identity";
 import { SuccessResponse } from "../../utils/http";
 
-interface LoginResponseType
-  extends SuccessResponse<{
-    userId: string;
-    accessToken: string;
-    refreshToken: string;
-    tokenExpires: number;
-  }> {}
+interface LoginResponseType extends SuccessResponse<string> {}
 
-export type { LoginResponseType };
+interface GetApplyingMentorResponseType extends SuccessResponse<IMentor[]> {}
+
+export type { LoginResponseType, GetApplyingMentorResponseType };

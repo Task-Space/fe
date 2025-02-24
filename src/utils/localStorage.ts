@@ -1,25 +1,16 @@
-const setTokenToLS = (token: {
-  accessToken: string;
-  refreshToken: string;
-  userId: string;
-  tokenExpires: number;
-}) => {
+const setTokenToLS = (token: { accessToken: string; refreshToken: string }) => {
   localStorage.setItem("token", JSON.stringify(token));
 };
 
 const getTokenFromLS = (): {
   accessToken: string;
   refreshToken: string;
-  userId: string;
-  tokenExpires: number;
 } => {
   return localStorage.getItem("token")
     ? JSON.parse(localStorage.getItem("token") as string)
     : {
         accessToken: "",
-        refreshToken: "",
-        userId: "",
-        tokenExpires: 0
+        refreshToken: ""
       };
 };
 

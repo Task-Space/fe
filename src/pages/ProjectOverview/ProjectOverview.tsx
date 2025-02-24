@@ -3,17 +3,20 @@ import Grid from "@mui/material/Grid2";
 import ProjectDetail from "./components/ProjectDetail";
 import Supporter from "./components/Supporter";
 import Members from "./components/Members";
+import { useProjectContext } from "../../contexts/ProjectContext";
 
 const ProjectOverview = () => {
+  const { project } = useProjectContext();
+
   return (
     <Box>
-      <Grid padding={"1.5rem 3rem"}>
+      <Grid>
         <Typography variant="h4" fontWeight={"bold"}>
-          Project PlanetX
+          {project?.name}
         </Typography>
       </Grid>
       <Divider />
-      <Grid padding={"1.5rem 3rem"} spacing={3} container>
+      <Grid padding={"1.5rem 0"} spacing={3} container>
         <Grid size={{ lg: 9 }}>
           <ProjectDetail />
         </Grid>

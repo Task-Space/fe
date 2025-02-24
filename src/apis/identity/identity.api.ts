@@ -5,6 +5,7 @@ import {
   LoginRequestType,
   RegisterRequestType
 } from "./identity-req.type";
+import { GetApplyingMentorResponseType } from "./identity-res.type";
 
 const URL = "Identity";
 
@@ -24,6 +25,14 @@ const identityApi = {
 
   login(data: LoginRequestType) {
     return http.post(`${URL}/login`, data);
+  },
+
+  getApplyingMentor() {
+    return http.get<GetApplyingMentorResponseType>(`${URL}/apply`);
+  },
+
+  putApply(data: { userId: string; isApproved: boolean; isBanned: boolean }) {
+    return http.put(`${URL}/apply`, data);
   }
 };
 

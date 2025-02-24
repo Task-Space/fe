@@ -5,3 +5,7 @@ export { default as ProjectOverview } from "./ProjectOverview/ProjectOverview";
 export { default as ProjectIndex } from "./ProjectIndex/ProjectIndex";
 export { default as TaskManagement } from "./TaskManagement/TaskManagement";
 export { default as Profile } from "./Profile/Profile";
+export { default as AdminBase } from "./AdminBase/AdminBase";
+export { default as AdminDashboard } from "./AdminDashboard/AdminDashboard";
+export { default as AccountsManagement } from "./AccountsManagement/AccountsManagement";
+export { default as MyProjectsPage } from "./MyProjectsPage/MyProjectsPage";

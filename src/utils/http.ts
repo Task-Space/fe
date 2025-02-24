@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, HttpStatusCode } from "axios";
 import { getTokenFromLS, setTokenToLS } from "./localStorage";
-import { LoginResponseType } from "../apis";
+
 class Http {
   instance: AxiosInstance;
   private accessToken: string;
@@ -28,9 +28,12 @@ class Http {
       (response) => {
         const { url } = response.config;
         if (`${url}`.includes("/login")) {
-          const data = response.data as LoginResponseType["data"];
-          this.accessToken = data.accessToken;
-          setTokenToLS(data);
+          const data = response.data;
+          this.accessToken = data.data;
+          setTokenToLS({
+            accessToken: data.data,
+            refreshToken: "ahihi"
+          });
         }
         return response;
       },

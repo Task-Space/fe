@@ -1,7 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import { useProjectContext } from "../../../contexts/ProjectContext";
+import dayjs from "dayjs";
 
 const ProjectDetail = () => {
+  const { project } = useProjectContext();
+
   return (
     <Box
       bgcolor={"#F8FAFC"}
@@ -19,7 +23,7 @@ const ProjectDetail = () => {
           Project Detail
         </Typography>
         <Typography variant="body1" fontStyle={"italic"}>
-          Start date: 01/02/2025
+          Start date: {dayjs(project?.startDate).format("DD/MM/YYYY")}
         </Typography>
       </Grid>
       <Box

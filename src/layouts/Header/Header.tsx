@@ -13,11 +13,13 @@ import MenuItem from "@mui/material/MenuItem";
 import Grid from "@mui/material/Grid2";
 import { SearchInput } from "../../components";
 import Notifications from "./components/Notifications";
+import { useNavigate } from "react-router-dom";
 
 const pages = ["Trang chủ", "Các dự án", "Về chúng tôi"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const Header = () => {
+  const nav = useNavigate();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -153,6 +155,7 @@ const Header = () => {
                 color: "white",
                 fontWeight: 600
               }}
+              onClick={() => nav("/my-projects")}
             >
               Dự án của bạn
             </Button>
