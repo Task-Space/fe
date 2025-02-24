@@ -50,6 +50,7 @@ const CreateMilestone = () => {
       {
         onSuccess: () => {
           toast.success("Create Milestone Successfully");
+          handleClose();
           queryClient.invalidateQueries({
             queryKey: ["milestones", project?.id]
           });
@@ -60,8 +61,16 @@ const CreateMilestone = () => {
 
   return (
     <>
-      <Button variant="outlined" size="medium" onClick={handleClickOpen}>
-        Add Milestone
+      <Button
+        variant="outlined"
+        sx={{
+          minWidth: "300px",
+          height: "77px",
+          borderRadius: "1rem"
+        }}
+        onClick={handleClickOpen}
+      >
+        Thêm thẻ mới
       </Button>
       <Dialog
         fullWidth

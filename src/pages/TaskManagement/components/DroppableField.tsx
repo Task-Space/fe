@@ -1,5 +1,4 @@
 import { useDroppable } from "@dnd-kit/core";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
   SortableContext,
   verticalListSortingStrategy
@@ -11,14 +10,16 @@ import CreateTask from "./CreateTask";
 
 interface DroppableFieldProps extends Grid2Props {
   id: string;
-  items: string[];
+  items: any[];
   title: string;
+  milestoneId: string;
 }
 
 const DroppableField = ({
   id,
   items,
   title,
+  milestoneId,
   ...props
 }: DroppableFieldProps) => {
   const { setNodeRef } = useDroppable({
@@ -28,15 +29,13 @@ const DroppableField = ({
   return (
     <Grid
       {...props}
-      sx={{}}
       bgcolor={"#F8FAFC"}
       padding={"1rem 1rem"}
       border={"1px solid #E2E8F0"}
       borderRadius={"1rem"}
-      container
       display={"flex"}
       flexDirection={"column"}
-      spacing={2}
+      gap={2}
     >
       <Grid
         container
@@ -45,32 +44,37 @@ const DroppableField = ({
         justifyContent={"space-between"}
       >
         <Grid container spacing={1}>
-          <Typography variant="h6" fontWeight={"bold"}>
+          <Typography variant="body1" fontWeight={"bold"}>
             {title}
           </Typography>
           {/* <Typography variant="h6" color="textSecondary">
             ({items.length})
           </Typography> */}
         </Grid>
-        <CreateTask />
+        <CreateTask milestoneId={milestoneId} />
       </Grid>
-      <SortableContext
-        id={id}
-        items={items}
-        strategy={verticalListSortingStrategy}
+      <Grid
+        sx={{
+          overflow: "auto"
+        }}
       >
-        <Grid
-          container
-          display={"flex"}
-          flexDirection={"column"}
-          spacing={2}
-          ref={setNodeRef}
+        <SortableContext
+          id={id}
+          items={items}
+          strategy={verticalListSortingStrategy}
         >
-          {items.map((id) => (
-            <TaskItem key={id} id={id} />
-          ))}
-        </Grid>
-      </SortableContext>
+          <Grid
+            display={"flex"}
+            flexDirection={"column"}
+            gap={2}
+            ref={setNodeRef}
+          >
+            {items.map(({ id }) => (
+              <TaskItem key={id} id={id} />
+            ))}
+          </Grid>
+        </SortableContext>
+      </Grid>
     </Grid>
   );
 };

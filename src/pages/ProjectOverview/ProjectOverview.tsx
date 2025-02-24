@@ -17,10 +17,10 @@ const ProjectOverview = () => {
       </Grid>
       <Divider />
       <Grid padding={"1.5rem 0"} spacing={3} container>
-        <Grid size={{ lg: 9 }}>
+        <Grid size={{ lg: 8.5 }}>
           <ProjectDetail />
         </Grid>
-        <Grid size={{ lg: 3 }} spacing={3} container>
+        <Grid size={{ lg: 3.5 }} spacing={3} container>
           <Supporter />
           <Members />
         </Grid>

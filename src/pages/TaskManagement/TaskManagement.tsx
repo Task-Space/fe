@@ -1,6 +1,9 @@
 import SearchIcon from "@mui/icons-material/Search";
 import {
+  Avatar,
+  AvatarGroup,
   Box,
+  Divider,
   InputAdornment,
   Tab,
   Tabs,
@@ -14,10 +17,12 @@ import { CustomTabPanel } from "../../components";
 import { useState } from "react";
 import TaskBoard from "./components/TaskBoard";
 import Calendar from "./components/Calendar";
+import InviteMembers from "../ProjectIndex/components/InviteMembers";
+import { useProjectContext } from "../../contexts/ProjectContext";
 
 const TaskManagement = () => {
   const [value, setValue] = useState(0);
-
+  const { project } = useProjectContext();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -29,27 +34,43 @@ const TaskManagement = () => {
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          marginBottom={2}
         >
-          <Typography variant="h4" fontWeight={"bold"}>
+          <Typography variant="h5" fontWeight={"bold"}>
             Project PlanetX
           </Typography>
-          <TextField
-            id="input-with-icon-textfield"
-            variant="outlined"
-            placeholder="Search ..."
-            size="small"
-            slotProps={{
-              input: {
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SearchIcon />
-                  </InputAdornment>
-                )
-              }
-            }}
-          />
+          <Grid container spacing={3}>
+            <TextField
+              id="input-with-icon-textfield"
+              variant="outlined"
+              placeholder="Search ..."
+              size="small"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  )
+                }
+              }}
+            />
+            <AvatarGroup max={6}>
+              {project?.team.teamMembers.map((member) => (
+                <Avatar alt={member.name} />
+              ))}
+            </AvatarGroup>
+            <InviteMembers />
+          </Grid>
         </Grid>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+
+        <Divider />
+
+        <Box marginTop={3}>
+          <TaskBoard />
+        </Box>
+
+        {/* <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -78,7 +99,7 @@ const TaskManagement = () => {
         </CustomTabPanel>
         <CustomTabPanel padding={0} value={value} index={1}>
           <Calendar />
-        </CustomTabPanel>
+        </CustomTabPanel> */}
       </Box>
     </>
   );

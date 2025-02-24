@@ -154,16 +154,23 @@ const TaskBoard = () => {
       onDragEnd={handleDragEnd}
     >
       <Grid
-        container
-        spacing={4}
+        // container
+        display={"flex"}
+        gap={3}
         sx={{
-          height: "fit-content"
+          height: "calc(100vh - 110px)"
         }}
+        overflow={"auto"}
       >
         {milestoneData?.data.data.map((milestone) => (
           <DroppableField
+            milestoneId={milestone.milestoneId}
             title={milestone.milestoneName}
-            size={{ lg: 4 }}
+            sx={{
+              minWidth: "350px",
+              height: "fit-content",
+              maxHeight: "95%"
+            }}
             key={milestone.milestoneId}
             id={milestone.milestoneId}
             items={milestone.milestoneTasks}

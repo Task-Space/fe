@@ -1,14 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
-import {
-  Avatar,
-  AvatarGroup,
-  Breadcrumbs,
-  Link,
-  Typography
-} from "@mui/material";
+import { Breadcrumbs, Link, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import InviteMembers from "./components/InviteMembers";
 import Sidebar from "../../layouts/Sidebar/Sidebar";
 import { useQuery } from "@tanstack/react-query";
 import projectApi from "../../apis/project/project.api";
@@ -53,11 +46,11 @@ const ProjectIndex = () => {
     <ProjectContext.Provider value={{ project: projectData?.data.data }}>
       <Sidebar />
       <Grid marginLeft={6}>
-        <Grid
+        {/* <Grid
           container
           bgcolor={"#F8FAFC"}
           display={"flex"}
-          padding={3}
+          padding={"0.5rem 3rem"}
           alignItems={"center"}
           justifyContent={"space-between"}
         >
@@ -67,18 +60,10 @@ const ProjectIndex = () => {
           >
             {breadcrumbs}
           </Breadcrumbs>
-          <Grid container spacing={3}>
-            <AvatarGroup max={6}>
-              {projectData?.data.data.team.teamMembers.map((member) => (
-                <Avatar alt={member.name} />
-              ))}
-            </AvatarGroup>
-            <InviteMembers />
-          </Grid>
-        </Grid>
+        </Grid> */}
         <div
           style={{
-            padding: "1.5rem 3rem"
+            padding: "1.5rem 3rem 0 3rem"
           }}
         >
           <Outlet />
