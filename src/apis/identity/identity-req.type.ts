@@ -22,4 +22,16 @@ interface ApplyRequestType {
   DomainIds: string[];
 }
 
-export type { LoginRequestType, RegisterRequestType, ApplyRequestType };
+interface UpdateMeReqType {
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password: string;
+}
+
+export type {
+  UpdateMeReqType,
+  LoginRequestType,
+  RegisterRequestType,
+  ApplyRequestType
+};

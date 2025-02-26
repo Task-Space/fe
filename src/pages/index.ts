@@ -12,3 +12,4 @@ export { default as MyProjectsPage } from "./MyProjectsPage/MyProjectsPage";
 export { default as ProjectList } from "./ProjectList/ProjectList";
 export { default as ProjectManagement } from "./ProjectsManagement/ProjectManagement";
 export { default as NotFoundPage } from "./NotFoundPage/NotFoundPage";
+export { default as Calendar } from "./Calendar/Calendar";

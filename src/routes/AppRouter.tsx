@@ -3,6 +3,7 @@ import {
   AccountsManagement,
   AdminBase,
   AdminDashboard,
+  Calendar,
   Homepage,
   Login,
   MyProjectsPage,
@@ -61,7 +62,8 @@ const AppRouter = () => {
         element={<ProjectIndex />}
         children={[
           <Route index={true} element={<ProjectOverview />} />,
-          <Route path="task-management" element={<TaskManagement />} />
+          <Route path="task-management" element={<TaskManagement />} />,
+          <Route path="calendar" element={<Calendar />} />
         ]}
       />
       <Route

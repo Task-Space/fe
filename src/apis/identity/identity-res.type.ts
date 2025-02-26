@@ -13,8 +13,11 @@ interface GetUserByIdResponseType
     projects: IProject[];
   }> {}
 
+interface GetMeResType extends SuccessResponse<IUser> {}
+
 export type {
   LoginResponseType,
   GetApplyingMentorResponseType,
-  GetUserByIdResponseType
+  GetUserByIdResponseType,
+  GetMeResType
 };

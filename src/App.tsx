@@ -8,18 +8,14 @@ import { useQuery } from "@tanstack/react-query";
 import { identityApi } from "./apis";
 
 function App() {
-  const userId = "03cf0749-fac8-47d6-b3da-d4a67a4996a2";
-
   const { data: profileData } = useQuery({
-    queryKey: ["profile", userId],
-    queryFn: () => identityApi.getUserById(userId)
+    queryKey: ["profile"],
+    queryFn: () => identityApi.getMe()
   });
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <AppContext.Provider
-        value={{ profile: profileData?.data.data.userInfos }}
-      >
+      <AppContext.Provider value={{ profile: profileData?.data.data }}>
         <BrowserRouter>
           <ToastContainer />
           <AppRouter />

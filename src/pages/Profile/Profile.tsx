@@ -1,26 +1,14 @@
-import {
-  Box,
-  Breadcrumbs,
-  Card,
-  Link,
-  Tab,
-  Tabs,
-  Typography
-} from "@mui/material";
+import { Box, Card, Tab, Tabs, Typography } from "@mui/material";
 import { useState } from "react";
 import Grid from "@mui/material/Grid2";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import DensityMediumIcon from "@mui/icons-material/DensityMedium";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { CustomTabPanel } from "../../components";
-import Sidebar from "../../layouts/Sidebar/Sidebar";
 import Settings from "./components/Settings";
 import Overview from "./components/Overview";
 import Teams from "./components/Teams";
 
 const Profile = () => {
-  const [open, setOpen] = useState(false);
-
   const [value, setValue] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

@@ -5,7 +5,6 @@ import {
   AvatarGroup,
   Divider,
   InputAdornment,
-  Link,
   TextField,
   Typography
 } from "@mui/material";
@@ -15,48 +14,62 @@ import projectApi from "../../apis/project/project.api";
 import { ProjectContext } from "../../contexts/ProjectContext";
 import SearchIcon from "@mui/icons-material/Search";
 import InviteMembers from "./components/InviteMembers";
+import { useAppContext } from "../../contexts/AppContext";
+import { useEffect, useState } from "react";
 
 const ProjectIndex = () => {
   const projectId = useLocation().pathname.split("/")[2];
-
+  const { profile } = useAppContext();
+  const [isMember, setIsMember] = useState(false);
   const { data: projectData } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => projectApi.getProjectById(projectId)
   });
 
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" onClick={() => {}}>
-      Home
-    </Link>,
-    <Link
-      underline="hover"
-      key="2"
-      color="inherit"
-      href="/material-ui/getting-started/installation/"
-      onClick={() => {}}
-    >
-      My Projects
-    </Link>,
-    <Link
-      underline="hover"
-      key="3"
-      color="inherit"
-      href="/material-ui/getting-started/installation/"
-      onClick={() => {}}
-    >
-      Project PlanetX
-    </Link>,
-    <Typography key="4" sx={{ color: "text.primary" }}>
-      Breadcrumb
-    </Typography>
-  ];
+  useEffect(() => {
+    const member = projectData?.data.data.team.teamMembers.find(
+      (item) => item.id === profile?.id
+    );
+    if (member) {
+      setIsMember(true);
+    } else {
+      setIsMember(false);
+    }
+  }, []);
+
+  // const breadcrumbs = [
+  //   <Link underline="hover" key="1" color="inherit" href="/" onClick={() => {}}>
+  //     Home
+  //   </Link>,
+  //   <Link
+  //     underline="hover"
+  //     key="2"
+  //     color="inherit"
+  //     href="/material-ui/getting-started/installation/"
+  //     onClick={() => {}}
+  //   >
+  //     My Projects
+  //   </Link>,
+  //   <Link
+  //     underline="hover"
+  //     key="3"
+  //     color="inherit"
+  //     href="/material-ui/getting-started/installation/"
+  //     onClick={() => {}}
+  //   >
+  //     Project PlanetX
+  //   </Link>,
+  //   <Typography key="4" sx={{ color: "text.primary" }}>
+  //     Breadcrumb
+  //   </Typography>
+  // ];
 
   return (
     <ProjectContext.Provider
-      value={{ project: projectData?.data.data, isMember: true }}
+      value={{ project: projectData?.data.data, isMember: isMember }}
     >
-      <Sidebar />
-      <Grid marginLeft={6}>
+      {isMember && <Sidebar />}
+      <Grid marginLeft={isMember ? 6 : 0}>
         {/* <Grid
           container
           bgcolor={"#F8FAFC"}

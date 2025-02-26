@@ -3,10 +3,12 @@ import http from "../../utils/http";
 import {
   ApplyRequestType,
   LoginRequestType,
-  RegisterRequestType
+  RegisterRequestType,
+  UpdateMeReqType
 } from "./identity-req.type";
 import {
   GetApplyingMentorResponseType,
+  GetMeResType,
   GetUserByIdResponseType
 } from "./identity-res.type";
 
@@ -39,6 +41,14 @@ const identityApi = {
 
   putApply(data: { userId: string; isApproved: boolean; isBanned: boolean }) {
     return http.put(`${URL}/apply`, data);
+  },
+
+  getMe() {
+    return http.get<GetMeResType>(`${URL}/me`);
+  },
+
+  udateMe(data: UpdateMeReqType) {
+    return http.put(`${URL}`, data);
   }
 };
 

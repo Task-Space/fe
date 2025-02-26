@@ -1,6 +1,6 @@
 import Grid from "@mui/material/Grid2";
-import CalendarLeftBar from "./CalendarLeftBar";
-import CalendarMain from "./CalendarMain";
+import CalendarLeftBar from "./components/CalendarLeftBar";
+import CalendarMain from "./components/CalendarMain";
 
 const Calendar = () => {
   return (

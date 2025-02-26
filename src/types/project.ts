@@ -30,6 +30,15 @@ interface IProject {
     name: string;
     description: string;
   }[];
+  isPublish: boolean;
+  status: PROJECT_STATUS;
+}
+
+enum PROJECT_STATUS {
+  PENDING,
+  APPROVE,
+  REJECT
 }
 
 export type { IProject };
+export { PROJECT_STATUS };

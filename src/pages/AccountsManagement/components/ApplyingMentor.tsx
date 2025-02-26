@@ -88,7 +88,12 @@ const ApplyingMentor = () => {
           color="primary"
           size="small"
           onClick={() => {
-            window.open(params.value as string, "_blank");
+            const link = document.createElement("a");
+            link.href = params.value as string; // Đường dẫn file
+            link.download = ""; // Trình duyệt sẽ tải file thay vì mở
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
           }}
         >
           View

@@ -1,6 +1,7 @@
 import { objectToFormData } from "../../utils/converter";
 import http from "../../utils/http";
 import {
+  ApplyTeamReqType,
   CreateTeamReqType,
   EditTeamReqType,
   TeamInviteReqType
@@ -36,6 +37,14 @@ const teamApi = {
 
   editTeam(data: EditTeamReqType) {
     return http.put(`${URL}/${data.TeamId}`, objectToFormData(data), {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+  },
+
+  applyTeam(data: ApplyTeamReqType) {
+    return http.post(`${URL}/Apply/${data.TeamId}`, objectToFormData(data), {
       headers: {
         "Content-Type": "multipart/form-data"
       }

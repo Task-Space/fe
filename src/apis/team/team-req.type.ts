@@ -18,4 +18,14 @@ interface EditTeamReqType extends CreateTeamReqType {
   UserId?: string;
 }
 
-export type { TeamInviteReqType, CreateTeamReqType, EditTeamReqType };
+interface ApplyTeamReqType {
+  TeamId: string;
+  ApplyCv: File;
+}
+
+export type {
+  TeamInviteReqType,
+  CreateTeamReqType,
+  EditTeamReqType,
+  ApplyTeamReqType
+};

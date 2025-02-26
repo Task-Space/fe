@@ -14,12 +14,9 @@ import Grid from "@mui/material/Grid2";
 import { SearchInput } from "../../components";
 import Notifications from "./components/Notifications";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../contexts/AppContext";
 
 const pages = [
-  // {
-  //   name: "Trang chủ",
-  //   href: "/"
-  // },
   { name: "Các dự án", href: "/projects" },
   { name: "Về chúng tôi", href: "/about" }
 ];
@@ -37,6 +34,7 @@ const settings = [
 
 const Header = () => {
   const nav = useNavigate();
+  const { profile } = useAppContext();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -186,45 +184,58 @@ const Header = () => {
             </Button>
             <SearchInput />
           </Box>
-          <Box
-            sx={{
-              flexGrow: 0,
-              display: { xs: "none", md: "flex" },
-              alignItems: "center",
-              gap: "0.5rem"
-            }}
-          >
-            <Notifications />
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right"
+          {profile ? (
+            <Box
+              sx={{
+                flexGrow: 0,
+                display: { xs: "none", md: "flex" },
+                alignItems: "center",
+                gap: "0.5rem"
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting.href} onClick={() => nav(setting.href)}>
-                  <Typography sx={{ textAlign: "center" }}>
-                    {setting.name}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              <Notifications />
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right"
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right"
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {settings.map((setting) => (
+                  <MenuItem
+                    key={setting.href}
+                    onClick={() => nav(setting.href)}
+                  >
+                    <Typography sx={{ textAlign: "center" }}>
+                      {setting.name}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          ) : (
+            <Button
+              onClick={() => nav("/login")}
+              variant="contained"
+              color="success"
+            >
+              Login
+            </Button>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

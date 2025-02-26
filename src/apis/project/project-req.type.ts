@@ -16,4 +16,10 @@ interface CreateProjectReqType {
   IsPublish: boolean;
 }
 
-export type { CreateProjectReqType };
+interface EditProjectApplyReqType {
+  projectApplyId: string;
+  isApproved: boolean;
+  reason: string;
+}
+
+export type { CreateProjectReqType, EditProjectApplyReqType };

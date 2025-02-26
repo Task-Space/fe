@@ -17,7 +17,7 @@ import { CreateProjectReqType } from "../../../apis/project/project-req.type";
 import Grid from "@mui/material/Grid2";
 import { ImageUpload, TextFieldControl } from "../../../components";
 import { DateField, DesktopDatePicker } from "@mui/x-date-pickers";
-import { useMutation, useQueries } from "@tanstack/react-query";
+import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import domainApi from "../../../apis/domain/domain.api";
 import MultipleSelect from "../../../components/MultipleSelect/MultipleSelect";
 import { IDomain } from "../../../types/domain";
@@ -37,6 +37,7 @@ const CreateNewProject = () => {
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs);
   const [isPublish, setIsPublish] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
+  const queryClient = useQueryClient();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -79,7 +80,14 @@ const CreateNewProject = () => {
         {
           onSuccess: () => {
             toast.success("Tạo dự án thành công");
+            queryClient.invalidateQueries({
+              queryKey: ["myProjects"]
+            });
             handleClose();
+          },
+          onError: (error) => {
+            console.log(error);
+            toast.error("Tạo dự án thất bại");
           }
         }
       );
@@ -98,6 +106,9 @@ const CreateNewProject = () => {
         {
           onSuccess: () => {
             toast.success("Tạo dự án thành công");
+            queryClient.invalidateQueries({
+              queryKey: ["myProjects"]
+            });
             handleClose();
           }
         }
@@ -233,7 +244,7 @@ const CreateNewProject = () => {
                   </FormControl>
                 </Grid>
               </Grid>
-              {selectedTeam === "new" && (
+              {selectedTeam === "new" ? (
                 <>
                   <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
                     <Grid size={{ xs: 12, sm: 6 }}>
@@ -355,6 +366,16 @@ const CreateNewProject = () => {
                     </Grid>
                   </Grid>
                 </>
+              ) : (
+                <Grid container>
+                  <Grid size={{ xs: 12, sm: 4 }}>
+                    <ImageUpload
+                      file={projectImage}
+                      setFile={setProjectImage}
+                      title="Ảnh Dự án"
+                    />
+                  </Grid>
+                </Grid>
               )}
 
               <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>

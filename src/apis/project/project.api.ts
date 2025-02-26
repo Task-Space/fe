@@ -1,6 +1,9 @@
 import { objectToFormData } from "../../utils/converter";
 import http from "../../utils/http";
-import { CreateProjectReqType } from "./project-req.type";
+import {
+  CreateProjectReqType,
+  EditProjectApplyReqType
+} from "./project-req.type";
 import { GetProjectByIdResType, GetProjectResType } from "./project-res.type";
 
 const URL = "Project";
@@ -14,12 +17,20 @@ const projectApi = {
     });
   },
 
+  getProjectApply() {
+    return http.get<GetProjectResType>(`${URL}/apply`);
+  },
+
   getProject() {
     return http.get<GetProjectResType>(`${URL}`);
   },
 
   getProjectById(projectId: string) {
     return http.get<GetProjectByIdResType>(`${URL}/${projectId}`);
+  },
+
+  editProjectApply(data: EditProjectApplyReqType) {
+    return http.put(`${URL}/apply/${data.projectApplyId}/response`, data);
   }
 };
 
