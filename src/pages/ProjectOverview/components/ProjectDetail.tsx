@@ -33,7 +33,8 @@ const ProjectDetail = () => {
         padding={2}
         borderRadius={"1rem"}
       >
-        <Grid>
+        {project?.description}
+        {/* <Grid>
           <Typography variant="subtitle1" fontWeight={"bold"}>
             Introduction:
           </Typography>
@@ -105,9 +106,9 @@ const ProjectDetail = () => {
               </Typography>
             </li>
           </ul>
-        </Grid>
+        </Grid> */}
       </Box>
-      <Box
+      {/* <Box
         mt={2}
         bgcolor={"#FFF"}
         border={"1px solid #E2E8F0"}
@@ -195,7 +196,7 @@ const ProjectDetail = () => {
             </li>
           </ul>
         </Grid>
-      </Box>
+      </Box> */}
     </Box>
   );
 };

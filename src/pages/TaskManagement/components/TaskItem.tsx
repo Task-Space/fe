@@ -32,17 +32,18 @@ import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { useSortable } from "@dnd-kit/sortable";
 import { useState } from "react";
+import { IMilestoneTask } from "../../../types/milestone-task";
 
 // interface TaskItemProps extends Task {}
 interface TaskItemProps {
-  id: string;
+  taskDetail: IMilestoneTask;
 }
 
 // const TaskItem = ({ id, progress, status, tag, title }: TaskItemProps) => {
-const TaskItem = ({ id }: TaskItemProps) => {
+const TaskItem = ({ taskDetail }: TaskItemProps) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
-      id
+      id: taskDetail.id
     });
 
   const [open, setOpen] = useState(false);
@@ -63,8 +64,7 @@ const TaskItem = ({ id }: TaskItemProps) => {
           flexDirection: "column",
           gap: "1rem"
         }}
-        onDoubleClick={() => console.log("double click")}
-        key={id}
+        key={taskDetail.id}
         ref={setNodeRef}
         style={style}
         {...listeners}
@@ -81,7 +81,7 @@ const TaskItem = ({ id }: TaskItemProps) => {
       >
         Important
       </div> */}
-        <Typography>{id}</Typography>
+        <Typography>{taskDetail.title}</Typography>
         <Grid>
           <Grid
             container

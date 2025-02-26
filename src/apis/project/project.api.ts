@@ -17,6 +17,7 @@ const projectApi = {
   getProject() {
     return http.get<GetProjectResType>(`${URL}`);
   },
+
   getProjectById(projectId: string) {
     return http.get<GetProjectByIdResType>(`${URL}/${projectId}`);
   }

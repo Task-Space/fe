@@ -46,7 +46,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 const SignInCard = () => {
   const nav = useNavigate();
   const [open, setOpen] = React.useState(false);
-
   const handleClickOpenForgotPassword = () => {
     setOpen(true);
   };

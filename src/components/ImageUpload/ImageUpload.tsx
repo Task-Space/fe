@@ -6,6 +6,8 @@ interface ImageUploadProps {
   file: File | null;
   setFile: (file: File | null) => void;
   title: string;
+  url?: string;
+  height?: string;
 }
 
 const VisuallyHiddenInput = styled("input")({
@@ -20,7 +22,13 @@ const VisuallyHiddenInput = styled("input")({
   width: 1
 });
 
-const ImageUpload = ({ file, setFile, title }: ImageUploadProps) => {
+const ImageUpload = ({
+  file,
+  setFile,
+  title,
+  url,
+  height
+}: ImageUploadProps) => {
   const [previewUrl, setPreviewUrl] = useState<string>();
 
   useEffect(() => {
@@ -40,7 +48,7 @@ const ImageUpload = ({ file, setFile, title }: ImageUploadProps) => {
       style={{
         width: "100%",
         padding: "0.5rem 1rem",
-        height: "200px",
+        height: height || "200px",
         border: "solid 1px #9E9E9D",
         borderRadius: "0.5rem",
         display: "flex",
@@ -51,13 +59,13 @@ const ImageUpload = ({ file, setFile, title }: ImageUploadProps) => {
       <Typography textAlign={"center"}>{title}</Typography>
       <div
         style={{
-          height: "100px",
+          height: "calc(100% - 5rem)",
           backgroundColor: "#f5f5f5"
         }}
       >
-        {previewUrl ? (
+        {previewUrl || url ? (
           <img
-            src={previewUrl}
+            src={previewUrl || url}
             alt="Preview"
             style={{ width: "100%", height: "100%", objectFit: "contain" }}
           />

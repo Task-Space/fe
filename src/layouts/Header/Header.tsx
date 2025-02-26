@@ -15,8 +15,25 @@ import { SearchInput } from "../../components";
 import Notifications from "./components/Notifications";
 import { useNavigate } from "react-router-dom";
 
-const pages = ["Trang chủ", "Các dự án", "Về chúng tôi"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const pages = [
+  // {
+  //   name: "Trang chủ",
+  //   href: "/"
+  // },
+  { name: "Các dự án", href: "/projects" },
+  { name: "Về chúng tôi", href: "/about" }
+];
+
+const settings = [
+  {
+    name: "Profile",
+    href: "/profile"
+  },
+  {
+    name: "Logout",
+    href: "/logout"
+  }
+];
 
 const Header = () => {
   const nav = useNavigate();
@@ -64,9 +81,11 @@ const Header = () => {
             }}
           >
             <img
+              onClick={() => nav("/")}
               style={{
                 width: "100%",
-                height: "auto"
+                height: "auto",
+                cursor: "pointer"
               }}
               src="/public/logo.svg"
             />
@@ -99,8 +118,14 @@ const Header = () => {
               sx={{ display: { xs: "block", md: "none" } }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: "center" }}>{page}</Typography>
+                <MenuItem
+                  key={page.href}
+                  onClick={handleCloseNavMenu}
+                  onClickCapture={() => nav("/" + page.href)}
+                >
+                  <Typography sx={{ textAlign: "center" }}>
+                    {page.name}
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -127,8 +152,8 @@ const Header = () => {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.href}
+                onClick={() => nav(page.href)}
                 sx={{
                   my: 2,
                   color: "#ABABAB",
@@ -137,7 +162,7 @@ const Header = () => {
                   fontSize: "1rem"
                 }}
               >
-                {page}
+                {page.name}
               </Button>
             ))}
           </Box>
@@ -192,9 +217,9 @@ const Header = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting.href} onClick={() => nav(setting.href)}>
                   <Typography sx={{ textAlign: "center" }}>
-                    {setting}
+                    {setting.name}
                   </Typography>
                 </MenuItem>
               ))}

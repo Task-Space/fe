@@ -1,4 +1,12 @@
-import { Box, Breadcrumbs, Link, Tab, Tabs, Typography } from "@mui/material";
+import {
+  Box,
+  Breadcrumbs,
+  Card,
+  Link,
+  Tab,
+  Tabs,
+  Typography
+} from "@mui/material";
 import { useState } from "react";
 import Grid from "@mui/material/Grid2";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -8,6 +16,7 @@ import { CustomTabPanel } from "../../components";
 import Sidebar from "../../layouts/Sidebar/Sidebar";
 import Settings from "./components/Settings";
 import Overview from "./components/Overview";
+import Teams from "./components/Teams";
 
 const Profile = () => {
   const [open, setOpen] = useState(false);
@@ -18,68 +27,62 @@ const Profile = () => {
     setValue(newValue);
   };
 
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" onClick={() => {}}>
-      Home
-    </Link>,
-
-    <Typography key="4" sx={{ color: "text.primary" }}>
-      My Profile
-    </Typography>
-  ];
-
   return (
-    <>
-      <Sidebar />
-      <Grid marginLeft={6}>
-        <Grid
-          container
-          bgcolor={"#F8FAFC"}
-          display={"flex"}
-          padding={3}
-          alignItems={"center"}
-          justifyContent={"space-between"}
+    <Card
+      sx={{
+        maxWidth: "1400px",
+        margin: "0 auto",
+        mt: 3,
+        padding: 3
+      }}
+    >
+      <Box
+        sx={{
+          borderBottom: 1,
+          borderColor: "divider"
+        }}
+      >
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
         >
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="small" />}
-            aria-label="breadcrumb"
-          >
-            {breadcrumbs}
-          </Breadcrumbs>
-          <Grid container spacing={3}></Grid>
-        </Grid>
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="basic tabs example"
-          >
-            <Tab
-              label={
-                <Grid container spacing={1}>
-                  <DensityMediumIcon />
-                  <Typography fontWeight={"bold"}>Overview</Typography>
-                </Grid>
-              }
-            />
-            <Tab
-              label={
-                <Grid container spacing={1}>
-                  <CalendarMonthIcon />
-                  <Typography fontWeight={"bold"}>Settings</Typography>
-                </Grid>
-              }
-            />
-          </Tabs>
-        </Box>
-        <CustomTabPanel padding={3} value={value} index={0}>
-          <Overview />
-        </CustomTabPanel>
-        <CustomTabPanel padding={3} value={value} index={1}>
-          <Settings />
-        </CustomTabPanel>
-      </Grid>
-    </>
+          <Tab
+            label={
+              <Grid container spacing={1}>
+                <DensityMediumIcon />
+                <Typography fontWeight={"bold"}>Overview</Typography>
+              </Grid>
+            }
+          />
+          <Tab
+            label={
+              <Grid container spacing={1}>
+                <CalendarMonthIcon />
+                <Typography fontWeight={"bold"}>Teams</Typography>
+              </Grid>
+            }
+          />
+          <Tab
+            label={
+              <Grid container spacing={2}>
+                <CalendarMonthIcon />
+                <Typography fontWeight={"bold"}>Settings</Typography>
+              </Grid>
+            }
+          />
+        </Tabs>
+      </Box>
+      <CustomTabPanel padding={3} value={value} index={0}>
+        <Overview />
+      </CustomTabPanel>
+      <CustomTabPanel padding={3} value={value} index={1}>
+        <Teams />
+      </CustomTabPanel>
+      <CustomTabPanel padding={3} value={value} index={2}>
+        <Settings />
+      </CustomTabPanel>
+    </Card>
   );
 };
 

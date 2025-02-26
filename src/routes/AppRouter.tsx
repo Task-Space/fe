@@ -6,8 +6,11 @@ import {
   Homepage,
   Login,
   MyProjectsPage,
+  NotFoundPage,
   Profile,
   ProjectIndex,
+  ProjectList,
+  ProjectManagement,
   ProjectOverview,
   Register,
   TaskManagement
@@ -15,12 +18,20 @@ import {
 import { baseTheme } from "../theme/ThemeVariables";
 import { ThemeProvider } from "@mui/material";
 import { Header } from "../layouts";
+import { useAppContext } from "../contexts/AppContext";
 
 const AppRouter = () => {
   const theme = baseTheme;
+  const { profile } = useAppContext();
 
   return (
     <Routes>
+      {!profile && (
+        <>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </>
+      )}
       <Route
         path="/"
         element={
@@ -33,11 +44,18 @@ const AppRouter = () => {
         }
         children={[
           <Route index={true} element={<Homepage />} />,
-          <Route path="my-projects" element={<MyProjectsPage />} />
+          <Route path="projects" element={<ProjectList />} />,
+          <Route path="my-projects" element={<MyProjectsPage />} />,
+          <Route
+            path="/profile"
+            element={<Profile />}
+            // children={[
+            //   <Route index={true} element={<ProjectOverview />} />,
+            //   <Route path="task-management" element={<TaskManagement />} />
+            // ]}
+          />
         ]}
       />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
       <Route
         path="/project/:id"
         element={<ProjectIndex />}
@@ -45,14 +63,6 @@ const AppRouter = () => {
           <Route index={true} element={<ProjectOverview />} />,
           <Route path="task-management" element={<TaskManagement />} />
         ]}
-      />
-      <Route
-        path="/profile"
-        element={<Profile />}
-        // children={[
-        //   <Route index={true} element={<ProjectOverview />} />,
-        //   <Route path="task-management" element={<TaskManagement />} />
-        // ]}
       />
       <Route
         path="/admin"
@@ -63,9 +73,11 @@ const AppRouter = () => {
         }
         children={[
           <Route index={true} element={<AdminDashboard />} />,
-          <Route path="accounts" element={<AccountsManagement />} />
+          <Route path="accounts" element={<AccountsManagement />} />,
+          <Route path="projects" element={<ProjectManagement />} />
         ]}
       />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };

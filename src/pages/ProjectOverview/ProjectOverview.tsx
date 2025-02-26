@@ -9,19 +9,13 @@ const ProjectOverview = () => {
   const { project } = useProjectContext();
 
   return (
-    <Box>
-      <Grid>
-        <Typography variant="h4" fontWeight={"bold"}>
-          {project?.name}
-        </Typography>
-      </Grid>
-      <Divider />
-      <Grid padding={"1.5rem 0"} spacing={3} container>
+    <Box mt={3}>
+      <Grid spacing={3} container>
         <Grid size={{ lg: 8.5 }}>
           <ProjectDetail />
         </Grid>
         <Grid size={{ lg: 3.5 }} spacing={3} container>
-          <Supporter />
+          {/* <Supporter /> */}
           <Members />
         </Grid>
       </Grid>

@@ -1,9 +1,11 @@
+import { IMilestoneTask } from "./milestone-task";
+
 interface IMilestone {
-  milestoneId: string;
-  milestoneName: string;
-  milestoneDescription: string;
+  id: string;
+  name: string;
+  description: string;
   createdBy: string;
-  milestoneTasks: any[];
+  milestoneTasks: IMilestoneTask[];
 }
 
 export type { IMilestone };

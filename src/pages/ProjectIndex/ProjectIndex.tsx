@@ -1,11 +1,20 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Grid from "@mui/material/Grid2";
-import { Breadcrumbs, Link, Typography } from "@mui/material";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import {
+  Avatar,
+  AvatarGroup,
+  Divider,
+  InputAdornment,
+  Link,
+  TextField,
+  Typography
+} from "@mui/material";
 import Sidebar from "../../layouts/Sidebar/Sidebar";
 import { useQuery } from "@tanstack/react-query";
 import projectApi from "../../apis/project/project.api";
 import { ProjectContext } from "../../contexts/ProjectContext";
+import SearchIcon from "@mui/icons-material/Search";
+import InviteMembers from "./components/InviteMembers";
 
 const ProjectIndex = () => {
   const projectId = useLocation().pathname.split("/")[2];
@@ -43,7 +52,9 @@ const ProjectIndex = () => {
   ];
 
   return (
-    <ProjectContext.Provider value={{ project: projectData?.data.data }}>
+    <ProjectContext.Provider
+      value={{ project: projectData?.data.data, isMember: true }}
+    >
       <Sidebar />
       <Grid marginLeft={6}>
         {/* <Grid
@@ -66,6 +77,41 @@ const ProjectIndex = () => {
             padding: "1.5rem 3rem 0 3rem"
           }}
         >
+          <Grid
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            marginBottom={2}
+          >
+            <Typography variant="h4" fontWeight={"bold"}>
+              {projectData?.data.data.name}
+            </Typography>
+            <Grid container spacing={3}>
+              <TextField
+                id="input-with-icon-textfield"
+                variant="outlined"
+                placeholder="Search ..."
+                size="small"
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <SearchIcon />
+                      </InputAdornment>
+                    )
+                  }
+                }}
+              />
+              <AvatarGroup max={6}>
+                {projectData?.data.data?.team.teamMembers.map((member) => (
+                  <Avatar key={member.id} alt={member.name} />
+                ))}
+              </AvatarGroup>
+              <InviteMembers />
+            </Grid>
+          </Grid>
+
+          <Divider />
           <Outlet />
         </div>
       </Grid>

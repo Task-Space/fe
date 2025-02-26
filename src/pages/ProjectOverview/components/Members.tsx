@@ -1,7 +1,10 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import { useProjectContext } from "../../../contexts/ProjectContext";
 
 const Members = () => {
+  const { project } = useProjectContext();
+
   return (
     <Box
       bgcolor={"#F8FAFC"}
@@ -24,48 +27,35 @@ const Members = () => {
         <Typography variant="subtitle1" fontWeight={"bold"}>
           Official:
         </Typography>
-        <Grid container mt={1} spacing={2}>
-          <Grid container display={"flex"} alignItems={"center"} spacing={1.5}>
-            <Avatar
-              sx={{
-                width: 35,
-                height: 35
-              }}
-              alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
-            />
-            <Typography variant="body1" color="textSecondary">
-              Trần Đình Thiên Tân (Leader)
-            </Typography>
-          </Grid>
-          <Grid container display={"flex"} alignItems={"center"} spacing={1.5}>
-            <Avatar
-              sx={{
-                width: 35,
-                height: 35
-              }}
-              alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
-            />
-            <Typography variant="body1" color="textSecondary">
-              Phan Quốc Thái
-            </Typography>
-          </Grid>
-          <Grid container display={"flex"} alignItems={"center"} spacing={1.5}>
-            <Avatar
-              sx={{
-                width: 35,
-                height: 35
-              }}
-              alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
-            />
-            <Typography variant="body1" color="textSecondary">
-              Dương Hoàng Nam
-            </Typography>
-          </Grid>
-
-          <Grid
+        <Grid
+          container
+          display={"flex"}
+          flexDirection={"column"}
+          mt={1}
+          spacing={2}
+        >
+          {project?.team.teamMembers.map((member) => (
+            <Grid
+              container
+              display={"flex"}
+              alignItems={"center"}
+              spacing={1.5}
+              key={member.id}
+            >
+              <Avatar
+                sx={{
+                  width: 35,
+                  height: 35
+                }}
+                alt={member.name}
+                src="/static/images/avatar/1.jpg"
+              />
+              <Typography variant="body1" color="textSecondary">
+                {member.name}
+              </Typography>
+            </Grid>
+          ))}
+          {/* <Grid
             container
             display={"flex"}
             justifyContent={"center"}
@@ -83,7 +73,7 @@ const Members = () => {
             >
               +2 More
             </Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
       <Box

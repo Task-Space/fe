@@ -7,10 +7,11 @@ import TaskItem from "./TaskItem";
 import { Typography } from "@mui/material";
 import Grid, { Grid2Props } from "@mui/material/Grid2";
 import CreateTask from "./CreateTask";
+import { IMilestoneTask } from "../../../types/milestone-task";
 
 interface DroppableFieldProps extends Grid2Props {
   id: string;
-  items: any[];
+  items: IMilestoneTask[];
   title: string;
   milestoneId: string;
 }
@@ -69,8 +70,8 @@ const DroppableField = ({
             gap={2}
             ref={setNodeRef}
           >
-            {items.map(({ id }) => (
-              <TaskItem key={id} id={id} />
+            {items.map((item) => (
+              <TaskItem key={id} taskDetail={item} />
             ))}
           </Grid>
         </SortableContext>

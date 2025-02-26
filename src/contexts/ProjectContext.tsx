@@ -1,8 +1,12 @@
 import { createContext, useContext } from "react";
 import { IProject } from "../types/project";
 
-const ProjectContext = createContext<{ project: IProject | undefined }>({
-  project: undefined
+const ProjectContext = createContext<{
+  project: IProject | undefined;
+  isMember: boolean;
+}>({
+  project: undefined,
+  isMember: false
 });
 
 const useProjectContext = () => {

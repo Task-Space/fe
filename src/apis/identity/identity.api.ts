@@ -5,7 +5,10 @@ import {
   LoginRequestType,
   RegisterRequestType
 } from "./identity-req.type";
-import { GetApplyingMentorResponseType } from "./identity-res.type";
+import {
+  GetApplyingMentorResponseType,
+  GetUserByIdResponseType
+} from "./identity-res.type";
 
 const URL = "Identity";
 
@@ -27,6 +30,9 @@ const identityApi = {
     return http.post(`${URL}/login`, data);
   },
 
+  getUserById(userId: string) {
+    return http.get<GetUserByIdResponseType>(`${URL}/user/${userId}`);
+  },
   getApplyingMentor() {
     return http.get<GetApplyingMentorResponseType>(`${URL}/apply`);
   },

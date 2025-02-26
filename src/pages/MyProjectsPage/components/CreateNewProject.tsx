@@ -17,17 +17,19 @@ import { CreateProjectReqType } from "../../../apis/project/project-req.type";
 import Grid from "@mui/material/Grid2";
 import { ImageUpload, TextFieldControl } from "../../../components";
 import { DateField, DesktopDatePicker } from "@mui/x-date-pickers";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQueries } from "@tanstack/react-query";
 import domainApi from "../../../apis/domain/domain.api";
 import MultipleSelect from "../../../components/MultipleSelect/MultipleSelect";
 import { IDomain } from "../../../types/domain";
 import dayjs, { Dayjs } from "dayjs";
 import projectApi from "../../../apis/project/project.api";
 import { toast } from "react-toastify";
+import { teamApi } from "../../../apis";
 
 const CreateNewProject = () => {
   const { register, formState, getValues } = useForm<CreateProjectReqType>();
   const [projectImage, setProjectImage] = useState<File | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<string>("new");
   const [logoTeam, setLogoTeam] = useState<File | null>(null);
   const [teamBackground, setTeamBackground] = useState<File | null>(null);
   const [domains, setDomains] = useState<string[]>([]);
@@ -56,35 +58,64 @@ const CreateNewProject = () => {
       return acc;
     }, []);
 
-    createProject.mutate(
-      {
-        ProjectName: getValues("ProjectName"),
-        Description: getValues("Description"),
-        TeamName: getValues("TeamName"),
-        TeamDescription: getValues("TeamDescription"),
-        TeamEmail: getValues("TeamEmail"),
-        TeamContact: getValues("TeamContact"),
-        TeamSize: getValues("TeamSize"),
-        ProjectImgUrl: projectImage as File,
-        TeamLogo: logoTeam as File,
-        TeamBackgroundImage: teamBackground as File,
-        StartDate: startDate?.toISOString() as string,
-        EndDates: endDate?.toISOString() as string,
-        DomainId: domainId as string[],
-        IsPublish: isPublish === 0
-      },
-      {
-        onSuccess: () => {
-          toast.success("Tạo dự án thành công");
-          handleClose();
+    if (selectedTeam === "new") {
+      createProject.mutate(
+        {
+          ProjectName: getValues("ProjectName"),
+          Description: getValues("Description"),
+          TeamName: getValues("TeamName"),
+          TeamDescription: getValues("TeamDescription"),
+          TeamEmail: getValues("TeamEmail"),
+          TeamContact: getValues("TeamContact"),
+          TeamSize: getValues("TeamSize"),
+          ProjectImgUrl: projectImage as File,
+          TeamLogo: logoTeam as File,
+          TeamBackgroundImage: teamBackground as File,
+          StartDate: startDate?.toISOString() as string,
+          EndDates: endDate?.toISOString() as string,
+          DomainId: domainId as string[],
+          IsPublish: isPublish === 0
+        },
+        {
+          onSuccess: () => {
+            toast.success("Tạo dự án thành công");
+            handleClose();
+          }
         }
-      }
-    );
+      );
+    } else {
+      createProject.mutate(
+        {
+          ProjectName: getValues("ProjectName"),
+          Description: getValues("Description"),
+          TeamId: selectedTeam,
+          ProjectImgUrl: projectImage as File,
+          StartDate: startDate?.toISOString() as string,
+          EndDates: endDate?.toISOString() as string,
+          DomainId: domainId as string[],
+          IsPublish: isPublish === 0
+        },
+        {
+          onSuccess: () => {
+            toast.success("Tạo dự án thành công");
+            handleClose();
+          }
+        }
+      );
+    }
   };
 
-  const { data: domainData } = useQuery({
-    queryKey: ["domains"],
-    queryFn: () => domainApi.getAllDomains()
+  const [{ data: domainData }, { data: teamsData }] = useQueries({
+    queries: [
+      {
+        queryKey: ["domains"],
+        queryFn: () => domainApi.getAllDomains()
+      },
+      {
+        queryKey: ["teams"],
+        queryFn: () => teamApi.getTeams()
+      }
+    ]
   });
 
   return (
@@ -144,128 +175,24 @@ const CreateNewProject = () => {
               <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <FormControl fullWidth>
-                    <FormLabel htmlFor="TeamName">Tên Nhóm</FormLabel>
-                    <TextFieldControl<CreateProjectReqType>
-                      register={register}
-                      size={"small"}
-                      id="TeamName"
-                      name="TeamName"
-                      placeholder="Joe"
-                      autoComplete="TeamName"
-                      required
+                    <FormLabel htmlFor="is-publish">Chọn Nhóm</FormLabel>
+                    <Select
+                      value={selectedTeam}
+                      onChange={(e) => setSelectedTeam(e.target.value)}
+                      id="is-publish"
+                      size="small"
                       fullWidth
-                      variant="outlined"
-                      error={formState.errors.TeamName}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <FormControl fullWidth>
-                    <FormLabel htmlFor="TeamDescription">Mô tả Nhóm</FormLabel>
-                    <TextFieldControl<CreateProjectReqType>
-                      register={register}
-                      size={"small"}
-                      id="TeamDescription"
-                      name="TeamDescription"
-                      placeholder="Joe"
-                      autoComplete="TeamDescription"
-                      required
-                      fullWidth
-                      variant="outlined"
-                      error={formState.errors.TeamDescription}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <ImageUpload
-                    file={projectImage}
-                    setFile={setProjectImage}
-                    title="Ảnh Dự án"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <ImageUpload
-                    file={logoTeam}
-                    setFile={setLogoTeam}
-                    title="Logo Team"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <ImageUpload
-                    file={teamBackground}
-                    setFile={setTeamBackground}
-                    title="Team Background"
-                  />
-                </Grid>
-              </Grid>
-              <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
-                <Grid size={{ xs: 12, sm: 4.5 }}>
-                  <FormControl fullWidth>
-                    <FormLabel htmlFor="TeamEmail">Email Nhóm</FormLabel>
-                    <TextFieldControl<CreateProjectReqType>
-                      register={register}
-                      size={"small"}
-                      id="TeamEmail"
-                      name="TeamEmail"
-                      placeholder="Joe"
-                      autoComplete="TeamEmail"
-                      required
-                      fullWidth
-                      variant="outlined"
-                      error={formState.errors.TeamEmail}
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4.5 }}>
-                  <FormControl fullWidth>
-                    <FormLabel htmlFor="TeamContact">Team Contact</FormLabel>
-                    <TextFieldControl<CreateProjectReqType>
-                      register={register}
-                      size={"small"}
-                      id="TeamContact"
-                      name="TeamContact"
-                      placeholder="Joe"
-                      autoComplete="TeamContact"
-                      required
-                      fullWidth
-                      variant="outlined"
-                      error={formState.errors.TeamContact}
-                    />
+                    >
+                      <MenuItem value={"new"}>Tạo nhóm mới</MenuItem>
+                      {teamsData?.data.data.map((team) => (
+                        <MenuItem key={team.id} value={team.id}>
+                          {team.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </FormControl>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 3 }}>
-                  <FormControl fullWidth>
-                    <FormLabel htmlFor="TeamSize">
-                      Số Lượng Thành Viên
-                    </FormLabel>
-                    <TextFieldControl<CreateProjectReqType>
-                      register={register}
-                      size={"small"}
-                      id="TeamSize"
-                      type="number"
-                      name="TeamSize"
-                      placeholder="Joe"
-                      autoComplete="TeamSize"
-                      required
-                      fullWidth
-                      variant="outlined"
-                      error={formState.errors.TeamSize}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <FormControl>
-                <FormLabel htmlFor="domains">Lĩnh Vực</FormLabel>
-                <MultipleSelect<IDomain>
-                  value={domains}
-                  setValue={setDomains}
-                  data={domainData?.data.data as IDomain[]}
-                />
-              </FormControl>
-              <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
-                <Grid size={{ xs: 12, sm: 4.5 }}>
                   <FormControl fullWidth>
                     <FormLabel htmlFor="password">Start Date</FormLabel>
                     <DesktopDatePicker
@@ -285,7 +212,7 @@ const CreateNewProject = () => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 4.5 }}>
+                <Grid size={{ xs: 12, sm: 3 }}>
                   <FormControl fullWidth>
                     <FormLabel htmlFor="password">End Date</FormLabel>
                     <DesktopDatePicker
@@ -305,7 +232,143 @@ const CreateNewProject = () => {
                     />
                   </FormControl>
                 </Grid>
-                <Grid size={{ xs: 12, sm: 3 }}>
+              </Grid>
+              {selectedTeam === "new" && (
+                <>
+                  <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <FormControl fullWidth>
+                        <FormLabel htmlFor="TeamName">Tên Nhóm</FormLabel>
+                        <TextFieldControl<CreateProjectReqType>
+                          register={register}
+                          size={"small"}
+                          id="TeamName"
+                          name="TeamName"
+                          placeholder="Joe"
+                          autoComplete="TeamName"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          error={formState.errors.TeamName}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <FormControl fullWidth>
+                        <FormLabel htmlFor="TeamDescription">
+                          Mô tả Nhóm
+                        </FormLabel>
+                        <TextFieldControl<CreateProjectReqType>
+                          register={register}
+                          size={"small"}
+                          id="TeamDescription"
+                          name="TeamDescription"
+                          placeholder="Joe"
+                          autoComplete="TeamDescription"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          error={formState.errors.TeamDescription}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                  <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                      <ImageUpload
+                        file={projectImage}
+                        setFile={setProjectImage}
+                        title="Ảnh Dự án"
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                      <ImageUpload
+                        file={logoTeam}
+                        setFile={setLogoTeam}
+                        title="Logo Team"
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4 }}>
+                      <ImageUpload
+                        file={teamBackground}
+                        setFile={setTeamBackground}
+                        title="Team Background"
+                      />
+                    </Grid>
+                  </Grid>
+                  <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+                    <Grid size={{ xs: 12, sm: 4.5 }}>
+                      <FormControl fullWidth>
+                        <FormLabel htmlFor="TeamEmail">Email Nhóm</FormLabel>
+                        <TextFieldControl<CreateProjectReqType>
+                          register={register}
+                          size={"small"}
+                          id="TeamEmail"
+                          name="TeamEmail"
+                          placeholder="Joe"
+                          autoComplete="TeamEmail"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          error={formState.errors.TeamEmail}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 4.5 }}>
+                      <FormControl fullWidth>
+                        <FormLabel htmlFor="TeamContact">
+                          Team Contact
+                        </FormLabel>
+                        <TextFieldControl<CreateProjectReqType>
+                          register={register}
+                          size={"small"}
+                          id="TeamContact"
+                          name="TeamContact"
+                          placeholder="Joe"
+                          autoComplete="TeamContact"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          error={formState.errors.TeamContact}
+                        />
+                      </FormControl>
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 3 }}>
+                      <FormControl fullWidth>
+                        <FormLabel htmlFor="TeamSize">
+                          Số Lượng Thành Viên
+                        </FormLabel>
+                        <TextFieldControl<CreateProjectReqType>
+                          register={register}
+                          size={"small"}
+                          id="TeamSize"
+                          type="number"
+                          name="TeamSize"
+                          placeholder="Joe"
+                          autoComplete="TeamSize"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          error={formState.errors.TeamSize}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                </>
+              )}
+
+              <Grid container size={12} spacing={{ xs: 1, sm: 3 }}>
+                <Grid size={{ xs: 12, sm: 10 }}>
+                  <FormControl fullWidth>
+                    <FormLabel htmlFor="domains">Lĩnh Vực</FormLabel>
+                    <MultipleSelect<IDomain>
+                      value={domains}
+                      setValue={setDomains}
+                      data={domainData?.data.data as IDomain[]}
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 2 }}>
                   <FormControl fullWidth>
                     <FormLabel htmlFor="is-publish">Công khai</FormLabel>
                     <Select

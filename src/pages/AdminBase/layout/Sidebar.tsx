@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import DashboardOutlinedIcon from "@mui/icons-material/DashboardOutlined";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 import Grid from "@mui/material/Grid2";
 
 const SidebarWidth = 265;
@@ -31,6 +32,11 @@ const Menuitems = [
     title: "Accounts",
     icon: ManageAccountsIcon,
     href: "/admin/accounts"
+  },
+  {
+    title: "Projects",
+    icon: AssignmentIcon,
+    href: "/admin/projects"
   }
 ];
 

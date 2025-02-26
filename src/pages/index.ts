@@ -10,3 +10,5 @@ export { default as AdminDashboard } from "./AdminDashboard/AdminDashboard";
 export { default as AccountsManagement } from "./AccountsManagement/AccountsManagement";
 export { default as MyProjectsPage } from "./MyProjectsPage/MyProjectsPage";
 export { default as ProjectList } from "./ProjectList/ProjectList";
+export { default as ProjectManagement } from "./ProjectsManagement/ProjectManagement";
+export { default as NotFoundPage } from "./NotFoundPage/NotFoundPage";
