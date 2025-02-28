@@ -20,11 +20,10 @@ import { toast } from "react-toastify";
 
 const CreateMilestone = () => {
   const { project } = useProjectContext();
-  const { register, formState, handleSubmit } = useForm<CreateMilestoneReqType>(
-    {
+  const { register, formState, handleSubmit, resetField } =
+    useForm<CreateMilestoneReqType>({
       defaultValues: { projectId: project?.id }
-    }
-  );
+    });
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
 
@@ -51,6 +50,8 @@ const CreateMilestone = () => {
         onSuccess: () => {
           toast.success("Create Milestone Successfully");
           handleClose();
+          resetField("milestoneDescription");
+          resetField("milestoneName");
           queryClient.invalidateQueries({
             queryKey: ["milestones", project?.id]
           });

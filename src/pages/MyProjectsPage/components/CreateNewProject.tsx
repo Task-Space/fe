@@ -1,6 +1,8 @@
 import {
+  Backdrop,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -38,7 +40,6 @@ const CreateNewProject = () => {
   const [isPublish, setIsPublish] = useState<number>(0);
   const [open, setOpen] = useState<boolean>(false);
   const queryClient = useQueryClient();
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -86,7 +87,6 @@ const CreateNewProject = () => {
             handleClose();
           },
           onError: (error) => {
-            console.log(error);
             toast.error("Tạo dự án thất bại");
           }
         }
@@ -134,6 +134,18 @@ const CreateNewProject = () => {
       <Button variant="outlined" onClick={handleClickOpen}>
         Create New Project
       </Button>
+      {createProject.isPending && (
+        <Backdrop
+          open={true}
+          sx={(theme) => ({
+            color: "#fff",
+            zIndex: Math.max.apply(Math, Object.values(theme.zIndex)) + 1
+          })}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+
       <Dialog
         open={open}
         onClose={handleClose}

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import CreateNewProject from "./components/CreateNewProject";
 import projectApi from "../../apis/project/project.api";
 import { Box, Button, Chip, Tab, Tabs } from "@mui/material";
@@ -8,13 +8,21 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CustomTabPanel } from "../../components";
 import { useState } from "react";
 import { IProject, PROJECT_STATUS } from "../../types/project";
+import EditProjectApply from "./components/EditProjectApply";
 
 const MyProjectsPage = () => {
   const nav = useNavigate();
-
-  const { data: myProjectData } = useQuery({
-    queryKey: ["projectsApply"],
-    queryFn: () => projectApi.getProjectApply()
+  const [{ data: projectApplyData }, { data: myProjectData }] = useQueries({
+    queries: [
+      {
+        queryKey: ["projectsApply"],
+        queryFn: () => projectApi.getProject({ isApply: true })
+      },
+      {
+        queryKey: ["myProjects"],
+        queryFn: () => projectApi.getMyProject()
+      }
+    ]
   });
 
   const columns: GridColDef[] = [
@@ -69,12 +77,19 @@ const MyProjectsPage = () => {
       disableColumnMenu: true,
       headerAlign: "center",
       renderCell: (params) => (
-        <Button
-          onClick={() => nav(`/project/${params.row.id}`)}
-          variant="contained"
-        >
-          View
-        </Button>
+        <>
+          {params.row.status !== PROJECT_STATUS.PENDING && (
+            <Button
+              onClick={() => nav(`/project/${params.row.id}`)}
+              variant="contained"
+            >
+              View
+            </Button>
+          )}
+          {params.row.isPublish === false && (
+            <EditProjectApply project={params.row} />
+          )}
+        </>
       )
     }
   ];
@@ -109,9 +124,7 @@ const MyProjectsPage = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={myProjectData?.data.data.filter(
-            (item) => item.status === PROJECT_STATUS.APPROVE
-          )}
+          rows={myProjectData?.data.data}
           columns={columns}
           initialState={{
             pagination: {
@@ -129,8 +142,8 @@ const MyProjectsPage = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={myProjectData?.data.data.filter(
-            (item) => item.status === PROJECT_STATUS.PENDING
+          rows={projectApplyData?.data.data.filter(
+            (item) => item.status === PROJECT_STATUS.PENDING && item.isPublish
           )}
           columns={columns}
           initialState={{
@@ -149,8 +162,8 @@ const MyProjectsPage = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={myProjectData?.data.data.filter(
-            (item) => item.status === PROJECT_STATUS.REJECT
+          rows={projectApplyData?.data.data.filter(
+            (item) => item.status === PROJECT_STATUS.REJECT && item.isPublish
           )}
           columns={columns}
           initialState={{
@@ -169,7 +182,7 @@ const MyProjectsPage = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={myProjectData?.data.data.filter(
+          rows={projectApplyData?.data.data.filter(
             (item) => item.isPublish === false
           )}
           columns={columns}

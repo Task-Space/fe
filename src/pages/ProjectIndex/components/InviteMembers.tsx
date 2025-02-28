@@ -1,11 +1,12 @@
 import {
   Avatar,
+  Backdrop,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogTitle,
-  InputAdornment,
   MenuItem,
   Select,
   TextField,
@@ -16,12 +17,16 @@ import Grid from "@mui/material/Grid2";
 import SendIcon from "@mui/icons-material/Send";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { useProjectContext } from "../../../contexts/ProjectContext";
+import { useMutation } from "@tanstack/react-query";
+import { teamApi } from "../../../apis";
+import { TeamInviteReqType } from "../../../apis/team/team-req.type";
+import { toast } from "react-toastify";
 
 const InviteMembers = () => {
   const [open, setOpen] = useState(false);
 
   const { project } = useProjectContext();
-
+  const [email, setEmail] = useState<string>("");
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -30,8 +35,36 @@ const InviteMembers = () => {
     setOpen(false);
   };
 
+  const inviteMember = useMutation({
+    mutationFn: (data: TeamInviteReqType) => teamApi.inviteToTeam(data)
+  });
+
+  const handleInvite = () => {
+    inviteMember.mutate(
+      { teamId: project?.team.teamDetails.id as string, email },
+      {
+        onSuccess: () => {
+          toast.success("Gửi lời mời thành công");
+          setEmail("");
+          handleClose();
+        }
+      }
+    );
+  };
+
   return (
     <>
+      {inviteMember.isPending && (
+        <Backdrop
+          open={true}
+          sx={(theme) => ({
+            color: "#fff",
+            zIndex: Math.max.apply(Math, Object.values(theme.zIndex)) + 1
+          })}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
       <Button
         variant="outlined"
         onClick={handleClickOpen}
@@ -77,18 +110,20 @@ const InviteMembers = () => {
                     id="outlined-start-adornment"
                     placeholder="Chọn thành viên"
                     fullWidth={true}
-                    slotProps={{
-                      input: {
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <Select defaultValue={0} variant="standard">
-                              <MenuItem value={0}>Can Edit</MenuItem>
-                              <MenuItem value={1}>Can View</MenuItem>
-                            </Select>
-                          </InputAdornment>
-                        )
-                      }
-                    }}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    // slotProps={{
+                    //   input: {
+                    //     endAdornment: (
+                    //       <InputAdornment position="end">
+                    //         <Select defaultValue={0} variant="standard">
+                    //           <MenuItem value={0}>Can Edit</MenuItem>
+                    //           <MenuItem value={1}>Can View</MenuItem>
+                    //         </Select>
+                    //       </InputAdornment>
+                    //     )
+                    //   }
+                    // }}
                   />
                 </Grid>
                 <Grid size={{ lg: 2 }} display={"flex"} justifyContent={"end"}>
@@ -102,6 +137,7 @@ const InviteMembers = () => {
                       color: "black",
                       fontWeight: 600
                     }}
+                    onClick={handleInvite}
                   >
                     Gửi lời mời
                   </Button>

@@ -15,27 +15,15 @@ import { ProjectContext } from "../../contexts/ProjectContext";
 import SearchIcon from "@mui/icons-material/Search";
 import InviteMembers from "./components/InviteMembers";
 import { useAppContext } from "../../contexts/AppContext";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const ProjectIndex = () => {
   const projectId = useLocation().pathname.split("/")[2];
   const { profile } = useAppContext();
-  const [isMember, setIsMember] = useState(false);
   const { data: projectData } = useQuery({
     queryKey: ["project", projectId],
     queryFn: () => projectApi.getProjectById(projectId)
   });
-
-  useEffect(() => {
-    const member = projectData?.data.data.team.teamMembers.find(
-      (item) => item.id === profile?.id
-    );
-    if (member) {
-      setIsMember(true);
-    } else {
-      setIsMember(false);
-    }
-  }, []);
 
   // const breadcrumbs = [
   //   <Link underline="hover" key="1" color="inherit" href="/" onClick={() => {}}>
@@ -66,10 +54,26 @@ const ProjectIndex = () => {
 
   return (
     <ProjectContext.Provider
-      value={{ project: projectData?.data.data, isMember: isMember }}
+      value={{
+        project: projectData?.data.data,
+        isMember:
+          projectData?.data.data.team.teamMembers.find(
+            (item) => item.id === profile?.id
+          ) !== null
+      }}
     >
-      {isMember && <Sidebar />}
-      <Grid marginLeft={isMember ? 6 : 0}>
+      {projectData?.data.data.team.teamMembers.find(
+        (item) => item.id === profile?.id
+      ) !== null && <Sidebar />}
+      <Grid
+        marginLeft={
+          projectData?.data.data.team.teamMembers.find(
+            (item) => item.id === profile?.id
+          ) !== null
+            ? 6
+            : 0
+        }
+      >
         {/* <Grid
           container
           bgcolor={"#F8FAFC"}

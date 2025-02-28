@@ -16,15 +16,11 @@ const teamApi = {
   },
 
   inviteToTeam({ email, teamId }: TeamInviteReqType) {
-    return http.post(
-      `${URL}/invite`,
-      { email },
-      {
-        params: {
-          teamId
-        }
+    return http.post(`${URL}/invite`, [{ email }], {
+      params: {
+        teamId
       }
-    );
+    });
   },
 
   createTeam(data: CreateTeamReqType) {

@@ -1,17 +1,13 @@
 import { Backdrop, CircularProgress } from "@mui/material";
 
-const Loading = ({
-  loading,
-  setLoading
-}: {
-  loading: boolean;
-  setLoading: () => void;
-}) => {
+const Loading = () => {
   return (
     <Backdrop
-      sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-      open={loading}
-      onClick={setLoading}
+      open={true}
+      sx={(theme) => ({
+        color: "#fff",
+        zIndex: Math.max.apply(Math, Object.values(theme.zIndex)) + 1
+      })}
     >
       <CircularProgress color="inherit" />
     </Backdrop>

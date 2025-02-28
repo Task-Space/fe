@@ -7,4 +7,9 @@ interface UpdateMilestoneTaskReqType {
   indexNumber?: number;
 }
 
-export type { UpdateMilestoneTaskReqType };
+interface AssignMemberToMilestoneTaskReqType {
+  milestoneTaskId: string;
+  userIds?: string[];
+}
+
+export type { UpdateMilestoneTaskReqType, AssignMemberToMilestoneTaskReqType };

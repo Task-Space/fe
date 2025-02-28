@@ -31,7 +31,7 @@ const AcceptRejectProject = ({ id }: AcceptRejectProjectProps) => {
 
   const editProjectApply = useMutation({
     mutationFn: (data: EditProjectApplyReqType) =>
-      projectApi.editProjectApply(data)
+      projectApi.responseProjectApply(data)
   });
 
   const handleEditProjectApply = (isApprove: boolean) => {

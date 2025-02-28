@@ -13,15 +13,11 @@ const ProjectManagement = () => {
   const [value, setValue] = useState(0);
   const nav = useNavigate();
 
-  const [{ data: projectsData }, { data: projectApplysData }] = useQueries({
+  const [{ data: projectsData }] = useQueries({
     queries: [
       {
         queryKey: ["projects"],
-        queryFn: () => projectApi.getProject()
-      },
-      {
-        queryKey: ["projectsApply"],
-        queryFn: () => projectApi.getProjectApply()
+        queryFn: () => projectApi.getProject({})
       }
     ]
   });
@@ -99,7 +95,7 @@ const ProjectManagement = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <Typography variant="h4" fontWeight={600}>
-        Account List
+        Project List
       </Typography>
       <Box mt={2} sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={value} onChange={handleChange} aria-label="accounts">
@@ -113,7 +109,9 @@ const ProjectManagement = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={projectsData?.data.data}
+          rows={projectsData?.data.data.filter(
+            (item) => item.status === PROJECT_STATUS.APPROVE
+          )}
           columns={columns}
           initialState={{
             pagination: {
@@ -131,8 +129,8 @@ const ProjectManagement = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={projectApplysData?.data.data.filter(
-            (item) => item.status === PROJECT_STATUS.PENDING
+          rows={projectsData?.data.data.filter(
+            (item) => item.status === PROJECT_STATUS.PENDING && item.isPublish
           )}
           columns={columns}
           initialState={{
@@ -151,7 +149,7 @@ const ProjectManagement = () => {
           sx={{
             marginTop: "1rem"
           }}
-          rows={projectApplysData?.data.data.filter(
+          rows={projectsData?.data.data.filter(
             (item) => item.status === PROJECT_STATUS.REJECT
           )}
           columns={columns}
