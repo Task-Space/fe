@@ -13,3 +13,4 @@ export { default as ProjectList } from "./ProjectList/ProjectList";
 export { default as ProjectManagement } from "./ProjectsManagement/ProjectManagement";
 export { default as NotFoundPage } from "./NotFoundPage/NotFoundPage";
 export { default as Calendar } from "./Calendar/Calendar";
+export { default as InviteToProject } from "./InviteToProject/InviteToProject";

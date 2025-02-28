@@ -8,13 +8,13 @@ import {
   FormGroup,
   InputLabel,
   LinearProgress,
+  Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
   Typography
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import TodayIcon from "@mui/icons-material/Today";
@@ -23,9 +23,9 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ShareIcon from "@mui/icons-material/Share";
 import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import ReplyIcon from "@mui/icons-material/Reply";
 import {
+  AssignMemberToMilestoneTaskReqType,
   milestoneApi,
   milestoneTaskApi,
   UpdateMilestoneTaskReqType
@@ -34,6 +34,12 @@ import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
 import { useProjectContext } from "../../../contexts/ProjectContext";
 import { toast } from "react-toastify";
 import { Loading } from "../../../components";
+import { useAppContext } from "../../../contexts/AppContext";
+import CreateJob from "./CreateJob";
+import milestoneTaskJobApi from "../../../apis/milestoneTaskJob/milestoneTaskJob";
+import { EditMilestoneTaskJobReqType } from "../../../apis/milestoneTaskJob/milestoneTaskJob-req.type";
+import { useState } from "react";
+import DeleteJob from "./DeleteJob";
 
 interface TaskItemDetailProps {
   taskId: string;
@@ -43,6 +49,7 @@ interface TaskItemDetailProps {
 
 const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
   const { project } = useProjectContext();
+  const { profile } = useAppContext();
   const queryClient = useQueryClient();
   const [{ data: milestoneTaskData }, { data: milestoneData }] = useQueries({
     queries: [
@@ -57,10 +64,50 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
     ]
   });
 
+  const assignMemberToTask = useMutation({
+    mutationFn: (data: AssignMemberToMilestoneTaskReqType) =>
+      milestoneTaskApi.assignMemberToMilestoneTask(data)
+  });
+
   const updateMilestoneTask = useMutation({
     mutationFn: (data: UpdateMilestoneTaskReqType) =>
       milestoneTaskApi.updateMilestoneTask(data)
   });
+
+  const handleAssignMemberToTask = () => {
+    assignMemberToTask.mutate(
+      {
+        milestoneTaskId: milestoneTaskData?.data.data.id as string
+      },
+      {
+        onSuccess: () => {
+          toast.success("Tham gia task thành công");
+        }
+      }
+    );
+  };
+
+  const editMilestoneTsakJob = useMutation({
+    mutationFn: (data: EditMilestoneTaskJobReqType) =>
+      milestoneTaskJobApi.editMilestoneTaskJob(data)
+  });
+
+  const handleCheckJob = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    jobId: string
+  ) => {
+    editMilestoneTsakJob.mutate(
+      {
+        milestoneTaskId: jobId,
+        isClick: event.target.value === "on"
+      },
+      {
+        onSuccess: () => {
+          toast.success("Cập nhật trạng thái công việc thành công");
+        }
+      }
+    );
+  };
 
   const handleChangeMilestone = (event: SelectChangeEvent<string>) => {
     updateMilestoneTask.mutate(
@@ -71,6 +118,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
       {
         onSuccess: () => {
           toast.success("Chỉnh sửa tác vụ thành công");
+          handleClose();
           queryClient.invalidateQueries({
             queryKey: ["milestones", project?.id]
           });
@@ -82,6 +130,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
   return (
     <>
       {updateMilestoneTask.isPending && <Loading />}
+      {assignMemberToTask.isPending && <Loading />}
 
       <Dialog fullWidth maxWidth="xl" open={open} onClose={handleClose}>
         <DialogTitle>
@@ -144,7 +193,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
               container
               spacing={2}
             >
-              <Grid padding={"0 2rem"}>
+              {/* <Grid padding={"0 2rem"}>
                 <Typography variant="body2">Thông báo</Typography>
                 <Button
                   startIcon={<RemoveRedEyeIcon />}
@@ -158,7 +207,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                 >
                   Theo dõi
                 </Button>
-              </Grid>
+              </Grid> */}
               <Grid
                 padding={"0"}
                 container
@@ -210,6 +259,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                       border: "1px solid #CBD5E1",
                       resize: "none"
                     }}
+                    disabled
                   />
                 </Grid>
               </Grid>
@@ -232,34 +282,62 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                       Công việc
                     </Typography>
                   </Grid>
-                  <Button size="small" sx={{ color: "#475569" }}>
-                    <ControlPointIcon />
-                  </Button>
+                  <CreateJob milestoneTaskId={taskId} />
                 </Grid>
                 <Grid padding={"0 0 0 2rem"}>
                   <FormGroup>
                     {milestoneTaskData?.data.data.taskJobs.map(
                       (milestoneTaskJob) => (
-                        <FormControlLabel
-                          key={milestoneTaskJob.id}
-                          control={
-                            <Checkbox
-                              color="default"
-                              checked={milestoneTaskJob.isFinished}
+                        <Grid container spacing={3}>
+                          <Grid size={{ lg: 6 }} container spacing={2}>
+                            <FormControlLabel
+                              key={milestoneTaskJob.id}
+                              control={
+                                <Checkbox
+                                  color="default"
+                                  checked={milestoneTaskJob.isFinished}
+                                  onChange={(event) =>
+                                    handleCheckJob(event, milestoneTaskJob.id)
+                                  }
+                                />
+                              }
+                              label={milestoneTaskJob.name}
+                              sx={{
+                                color: "#475569"
+                                // height: "1.75rem"
+                              }}
                             />
-                          }
-                          label={milestoneTaskJob.jobTitle}
-                          sx={{
-                            color: "#475569",
-                            height: "1.75rem"
-                          }}
-                        />
+                            <DeleteJob />
+                          </Grid>
+                        </Grid>
                       )
                     )}
                   </FormGroup>
                 </Grid>
               </Grid>
               <Grid
+                padding={"0"}
+                container
+                display={"flex"}
+                flexDirection={"column"}
+              >
+                <Grid container spacing={1}>
+                  <FormatAlignLeftIcon />
+                  <Typography variant="body1" fontWeight={600}>
+                    Thành viên tham gia
+                  </Typography>
+                </Grid>
+                <Grid padding={"0 0 0 3rem"}>
+                  <ul>
+                    {milestoneTaskData?.data.data.userJoinTasks.map((user) => (
+                      <li>
+                        <Typography>{user.userName}</Typography>
+                      </li>
+                    ))}
+                  </ul>
+                </Grid>
+              </Grid>
+              {/* <Grid
                 padding={"0"}
                 container
                 display={"flex"}
@@ -286,7 +364,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                     }}
                   />
                 </Grid>
-              </Grid>
+              </Grid> */}
             </Grid>
             <Grid
               size={{ lg: 2 }}
@@ -303,7 +381,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
               >
                 <Button
                   variant="contained"
-                  onClick={handleClose}
+                  onClick={handleAssignMemberToTask}
                   fullWidth={true}
                   sx={{
                     height: "2.5rem",
@@ -312,11 +390,15 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                   }}
                   startIcon={<PersonAddIcon />}
                 >
-                  Tham gia
+                  {milestoneTaskData?.data.data.userJoinTasks.find(
+                    (item) => item.userId === profile?.id
+                  ) !== null
+                    ? "Hủy tham gia"
+                    : "Tham gia"}
                 </Button>
                 <Button
                   variant="contained"
-                  onClick={handleClose}
+                  onClick={handleAssignMemberToTask}
                   fullWidth={true}
                   sx={{
                     height: "2.5rem",

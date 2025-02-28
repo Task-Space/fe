@@ -1,5 +1,8 @@
 import http from "../../utils/http";
-import { UpdateMilestoneTaskReqType } from "./milestoneTask-req.type";
+import {
+  AssignMemberToMilestoneTaskReqType,
+  UpdateMilestoneTaskReqType
+} from "./milestoneTask-req.type";
 import { GetMilestoneTaskByIdResType } from "./milestoneTask-res.type";
 
 const URL = "MilestoneTask";
@@ -13,8 +16,8 @@ const milestoneTaskApi = {
     return http.get<GetMilestoneTaskByIdResType>(`${URL}/${milestoneTaskId}`);
   },
 
-  assignMemberToMilestoneTask(data: UpdateMilestoneTaskReqType) {
-    return http.post(`${URL}/assign`, data);
+  assignMemberToMilestoneTask(data: AssignMemberToMilestoneTaskReqType) {
+    return http.post(`${URL}/assign/${data.milestoneTaskId}`, data);
   }
 };
 

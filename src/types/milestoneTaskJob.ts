@@ -1,6 +1,6 @@
 interface IMilestoneTaskJob {
   id: string;
-  jobTitle: string;
+  name: string;
   isFinished: boolean;
   userId: string;
   userName: string;

@@ -10,7 +10,7 @@ interface IMilestoneTask {
     milestoneName: string;
   };
   taskJobs: IMilestoneTaskJob[];
-  userJoinTasks: any[];
+  userJoinTasks: { userId: string; userName: string }[];
   resource: any[];
   notifications: [
     {

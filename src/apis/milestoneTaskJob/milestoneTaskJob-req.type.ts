@@ -2,4 +2,19 @@ interface GetMilestoneTaskJobsReqType {
   MilestoneTaskId?: string;
 }
 
-export type { GetMilestoneTaskJobsReqType };
+interface CreateMilestoneTaskJobReqType {
+  jobTitle: string;
+  milestoneTaskId: string;
+}
+
+interface EditMilestoneTaskJobReqType {
+  jobTitle?: string;
+  milestoneTaskId: string;
+  isClick: boolean;
+}
+
+export type {
+  GetMilestoneTaskJobsReqType,
+  CreateMilestoneTaskJobReqType,
+  EditMilestoneTaskJobReqType
+};
