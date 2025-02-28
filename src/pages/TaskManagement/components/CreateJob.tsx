@@ -42,8 +42,8 @@ const CreateJob = ({ milestoneTaskId }: { milestoneTaskId: string }) => {
           toast.success("Tạo công việc mới thành công");
           queryClient.invalidateQueries({
             queryKey: ["milestoneTask", milestoneTaskId]
-          }),
-            handleClose();
+          });
+          handleClose();
         }
       }
     );

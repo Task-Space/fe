@@ -4,9 +4,11 @@ import { IProject } from "../types/project";
 const ProjectContext = createContext<{
   project: IProject | undefined;
   isMember: boolean;
+  isLeader: boolean;
 }>({
   project: undefined,
-  isMember: false
+  isMember: false,
+  isLeader: false
 });
 
 const useProjectContext = () => {

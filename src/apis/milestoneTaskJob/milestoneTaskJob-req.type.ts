@@ -9,7 +9,7 @@ interface CreateMilestoneTaskJobReqType {
 
 interface EditMilestoneTaskJobReqType {
   jobTitle?: string;
-  milestoneTaskId: string;
+  milestoneTaskJobId: string;
   isClick: boolean;
 }
 

@@ -7,7 +7,7 @@ import TaskItem from "./TaskItem";
 import { Typography } from "@mui/material";
 import Grid, { Grid2Props } from "@mui/material/Grid2";
 import CreateTask from "./CreateTask";
-import { IMilestoneTask } from "../../../types/milestone-task";
+import { IMilestoneTask } from "../../../types/milestoneTask";
 
 interface DroppableFieldProps extends Grid2Props {
   id: string;

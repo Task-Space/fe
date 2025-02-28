@@ -2,9 +2,7 @@ import { CSS } from "@dnd-kit/utilities";
 import {
   Avatar,
   AvatarGroup,
-  Backdrop,
   Card,
-  CircularProgress,
   LinearProgress,
   Typography
 } from "@mui/material";
@@ -13,7 +11,7 @@ import TextsmsIcon from "@mui/icons-material/Textsms";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { useState } from "react";
-import { IMilestoneTask } from "../../../types/milestone-task";
+import { IMilestoneTask } from "../../../types/milestoneTask";
 import TaskItemDetail from "./TaskItemDetail";
 
 // interface TaskItemProps extends Task {}
@@ -73,9 +71,14 @@ const TaskItem = ({ taskDetail }: TaskItemProps) => {
             justifyContent={"space-between"}
           >
             <Typography variant={"body2"}>Progress</Typography>
-            <Typography variant={"body2"}>0%</Typography>
+            <Typography variant={"body2"}>
+              {taskDetail.progress * 100}%
+            </Typography>
           </Grid>
-          <LinearProgress value={80} variant="determinate" />
+          <LinearProgress
+            value={taskDetail.progress * 100}
+            variant="determinate"
+          />
         </Grid>
         <Grid
           container
@@ -84,22 +87,16 @@ const TaskItem = ({ taskDetail }: TaskItemProps) => {
           alignItems={"center"}
         >
           <AvatarGroup>
-            <Avatar
-              sx={{
-                width: 20,
-                height: 20
-              }}
-              alt="Remy Sharp"
-              src="/static/images/avatar/1.jpg"
-            />
-            <Avatar
-              sx={{
-                width: 20,
-                height: 20
-              }}
-              alt="Travis Howard"
-              src="/static/images/avatar/2.jpg"
-            />
+            {taskDetail.userJoinTasks.map((user) => (
+              <Avatar
+                sx={{
+                  width: 20,
+                  height: 20
+                }}
+                alt="Remy Sharp"
+                src="/static/images/avatar/1.jpg"
+              />
+            ))}
           </AvatarGroup>
           <Grid container spacing={2}>
             <Grid container spacing={1} alignItems={"center"}>

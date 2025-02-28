@@ -12,4 +12,13 @@ interface AssignMemberToMilestoneTaskReqType {
   userIds?: string[];
 }
 
-export type { UpdateMilestoneTaskReqType, AssignMemberToMilestoneTaskReqType };
+interface UnassignMemberToMilestoneTaskReqType {
+  milestoneTaskId: string;
+  userId?: string;
+}
+
+export type {
+  UpdateMilestoneTaskReqType,
+  AssignMemberToMilestoneTaskReqType,
+  UnassignMemberToMilestoneTaskReqType
+};

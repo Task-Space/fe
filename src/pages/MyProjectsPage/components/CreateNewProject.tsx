@@ -84,6 +84,9 @@ const CreateNewProject = () => {
             queryClient.invalidateQueries({
               queryKey: ["myProjects"]
             });
+            queryClient.invalidateQueries({
+              queryKey: ["projectsApply"]
+            });
             handleClose();
           },
           onError: (error) => {

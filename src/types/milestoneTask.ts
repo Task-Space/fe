@@ -2,12 +2,12 @@ import { IMilestoneTaskJob } from "./milestoneTaskJob";
 
 interface IMilestoneTask {
   id: string;
-  name: string;
+  title: string;
   description: string;
   progress: number;
   mileStone: {
-    milestoneId: string;
-    milestoneName: string;
+    id: string;
+    name: string;
   };
   taskJobs: IMilestoneTaskJob[];
   userJoinTasks: { userId: string; userName: string }[];

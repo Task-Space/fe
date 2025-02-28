@@ -1,4 +1,4 @@
-import { IMilestoneTask } from "./milestone-task";
+import { IMilestoneTask } from "./milestoneTask";
 
 interface IMilestone {
   id: string;

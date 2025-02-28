@@ -23,9 +23,15 @@ interface ApplyTeamReqType {
   ApplyCv: File;
 }
 
+interface AcceptTeamInviteReqType {
+  token: string;
+  isApprove: boolean;
+}
+
 export type {
   TeamInviteReqType,
   CreateTeamReqType,
   EditTeamReqType,
-  ApplyTeamReqType
+  ApplyTeamReqType,
+  AcceptTeamInviteReqType
 };

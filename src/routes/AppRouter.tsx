@@ -5,6 +5,7 @@ import {
   AdminDashboard,
   Calendar,
   Homepage,
+  InviteToProject,
   Login,
   MyProjectsPage,
   NotFoundPage,
@@ -47,6 +48,7 @@ const AppRouter = () => {
           <Route index={true} element={<Homepage />} />,
           <Route path="projects" element={<ProjectList />} />,
           <Route path="my-projects" element={<MyProjectsPage />} />,
+          <Route path="invite-to-project" element={<InviteToProject />} />,
           <Route
             path="/profile"
             element={<Profile />}

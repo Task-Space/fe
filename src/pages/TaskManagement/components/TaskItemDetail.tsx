@@ -8,7 +8,6 @@ import {
   FormGroup,
   InputLabel,
   LinearProgress,
-  Menu,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -28,6 +27,7 @@ import {
   AssignMemberToMilestoneTaskReqType,
   milestoneApi,
   milestoneTaskApi,
+  UnassignMemberToMilestoneTaskReqType,
   UpdateMilestoneTaskReqType
 } from "../../../apis";
 import { useMutation, useQueries, useQueryClient } from "@tanstack/react-query";
@@ -38,8 +38,10 @@ import { useAppContext } from "../../../contexts/AppContext";
 import CreateJob from "./CreateJob";
 import milestoneTaskJobApi from "../../../apis/milestoneTaskJob/milestoneTaskJob";
 import { EditMilestoneTaskJobReqType } from "../../../apis/milestoneTaskJob/milestoneTaskJob-req.type";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteJob from "./DeleteJob";
+import AssignMember from "./AssignMember";
+import { IMilestoneTask } from "../../../types/milestoneTask";
 
 interface TaskItemDetailProps {
   taskId: string;
@@ -48,8 +50,9 @@ interface TaskItemDetailProps {
 }
 
 const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
-  const { project } = useProjectContext();
+  const { project, isLeader } = useProjectContext();
   const { profile } = useAppContext();
+  const [isInTask, setIsInTask] = useState<boolean>();
   const queryClient = useQueryClient();
   const [{ data: milestoneTaskData }, { data: milestoneData }] = useQueries({
     queries: [
@@ -69,22 +72,61 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
       milestoneTaskApi.assignMemberToMilestoneTask(data)
   });
 
+  useEffect(() => {
+    const user = milestoneTaskData?.data.data.userJoinTasks.find(
+      (user) => user.userId === profile?.id
+    );
+    if (user) {
+      setIsInTask(true);
+    }
+  }, [milestoneTaskData]);
+
+  const unassignMemberFromTask = useMutation({
+    mutationFn: (data: UnassignMemberToMilestoneTaskReqType) =>
+      milestoneTaskApi.unassignMemberFromMilestoneTask(data)
+  });
+
   const updateMilestoneTask = useMutation({
     mutationFn: (data: UpdateMilestoneTaskReqType) =>
       milestoneTaskApi.updateMilestoneTask(data)
   });
 
   const handleAssignMemberToTask = () => {
-    assignMemberToTask.mutate(
-      {
-        milestoneTaskId: milestoneTaskData?.data.data.id as string
-      },
-      {
-        onSuccess: () => {
-          toast.success("Tham gia task thành công");
+    if (isInTask) {
+      unassignMemberFromTask.mutate(
+        {
+          milestoneTaskId: milestoneTaskData?.data.data.id as string
+        },
+        {
+          onSuccess: () => {
+            toast.success("Hủy tham gia task thành công");
+            queryClient.invalidateQueries({
+              queryKey: ["milestoneTask", taskId]
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["milestones", project?.id]
+            });
+          }
         }
-      }
-    );
+      );
+    } else {
+      assignMemberToTask.mutate(
+        {
+          milestoneTaskId: milestoneTaskData?.data.data.id as string
+        },
+        {
+          onSuccess: () => {
+            toast.success("Tham gia task thành công");
+            queryClient.invalidateQueries({
+              queryKey: ["milestoneTask", taskId]
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["milestones", project?.id]
+            });
+          }
+        }
+      );
+    }
   };
 
   const editMilestoneTsakJob = useMutation({
@@ -98,12 +140,15 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
   ) => {
     editMilestoneTsakJob.mutate(
       {
-        milestoneTaskId: jobId,
+        milestoneTaskJobId: jobId,
         isClick: event.target.value === "on"
       },
       {
         onSuccess: () => {
           toast.success("Cập nhật trạng thái công việc thành công");
+          queryClient.invalidateQueries({
+            queryKey: ["milestoneTask", taskId]
+          });
         }
       }
     );
@@ -151,9 +196,7 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                   labelId="milestone"
                   size="small"
                   onChange={(e) => handleChangeMilestone(e)}
-                  defaultValue={
-                    milestoneTaskData?.data.data.mileStone.milestoneId
-                  }
+                  defaultValue={milestoneTaskData?.data.data.mileStone.id}
                   sx={{
                     backgroundColor: "#E2E8F0",
                     fontWeight: 600
@@ -229,7 +272,9 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                       borderRadius: "0.5rem"
                     }}
                     variant="determinate"
-                    value={milestoneTaskData?.data.data.progress}
+                    value={
+                      (milestoneTaskData?.data.data.progress as number) * 100
+                    }
                   />
                 </Grid>
               </Grid>
@@ -307,7 +352,10 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                                 // height: "1.75rem"
                               }}
                             />
-                            <DeleteJob />
+                            <DeleteJob
+                              jobId={milestoneTaskJob.id}
+                              taskId={taskId}
+                            />
                           </Grid>
                         </Grid>
                       )
@@ -390,25 +438,16 @@ const TaskItemDetail = ({ taskId, handleClose, open }: TaskItemDetailProps) => {
                   }}
                   startIcon={<PersonAddIcon />}
                 >
-                  {milestoneTaskData?.data.data.userJoinTasks.find(
-                    (item) => item.userId === profile?.id
-                  ) !== null
-                    ? "Hủy tham gia"
-                    : "Tham gia"}
+                  {isInTask ? "Hủy tham gia" : "Tham gia"}
                 </Button>
-                <Button
-                  variant="contained"
-                  onClick={handleAssignMemberToTask}
-                  fullWidth={true}
-                  sx={{
-                    height: "2.5rem",
-                    backgroundColor: "#E2E8F0",
-                    color: "black"
-                  }}
-                  startIcon={<PersonAddIcon />}
-                >
-                  Phân công
-                </Button>
+                {isLeader && (
+                  <AssignMember
+                    milestoneTask={
+                      milestoneTaskData?.data.data as IMilestoneTask
+                    }
+                  />
+                )}
+
                 <Button
                   variant="contained"
                   onClick={handleClose}

@@ -20,7 +20,11 @@ const milestoneTaskJobApi = {
   },
 
   editMilestoneTaskJob(data: EditMilestoneTaskJobReqType) {
-    return http.put(`${URL}/${data.milestoneTaskId}`, data);
+    return http.put(`${URL}/${data.milestoneTaskJobId}`, data);
+  },
+
+  deleteMilestoneTaskJob(MilestoneTaskJobId: string) {
+    return http.delete(`${URL}/`, { params: { MilestoneTaskJobId } });
   }
 };
 

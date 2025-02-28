@@ -20,7 +20,7 @@ import { useProjectContext } from "../../../contexts/ProjectContext";
 import milestoneApi from "../../../apis/milestone/milestone.api";
 import DroppableField from "./DroppableField";
 import CreateMilestone from "./CreateMilestone";
-import { IMilestoneTask } from "../../../types/milestone-task";
+import { IMilestoneTask } from "../../../types/milestoneTask";
 import milestoneTaskApi from "../../../apis/milestoneTask/milestoneTask.api";
 import { UpdateMilestoneTaskReqType } from "../../../apis/milestoneTask/milestoneTask-req.type";
 

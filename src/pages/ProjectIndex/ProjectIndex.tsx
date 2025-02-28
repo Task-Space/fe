@@ -15,7 +15,6 @@ import { ProjectContext } from "../../contexts/ProjectContext";
 import SearchIcon from "@mui/icons-material/Search";
 import InviteMembers from "./components/InviteMembers";
 import { useAppContext } from "../../contexts/AppContext";
-import { useState } from "react";
 
 const ProjectIndex = () => {
   const projectId = useLocation().pathname.split("/")[2];
@@ -59,7 +58,11 @@ const ProjectIndex = () => {
         isMember:
           projectData?.data.data.team.teamMembers.find(
             (item) => item.id === profile?.id
-          ) !== null
+          ) !== null,
+        isLeader:
+          projectData?.data.data.team.teamMembers.find(
+            (item) => item.id === profile?.id
+          )?.isMain === true
       }}
     >
       {projectData?.data.data.team.teamMembers.find(

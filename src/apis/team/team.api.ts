@@ -1,6 +1,7 @@
 import { objectToFormData } from "../../utils/converter";
 import http from "../../utils/http";
 import {
+  AcceptTeamInviteReqType,
   ApplyTeamReqType,
   CreateTeamReqType,
   EditTeamReqType,
@@ -45,6 +46,16 @@ const teamApi = {
         "Content-Type": "multipart/form-data"
       }
     });
+  },
+
+  acceptTeamInvite(data: AcceptTeamInviteReqType) {
+    return http.put(
+      `${URL}/Invite`,
+      {},
+      {
+        params: data
+      }
+    );
   }
 };
 
